@@ -58,7 +58,7 @@ public class FtPlayList : GLib.Object {
 		return "";
 	}
 	
-	public string get_cover_uri () {
+	public string get_cover_path () {
 		// TODO
 		return "";
 	}

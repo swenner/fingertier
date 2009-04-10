@@ -147,7 +147,7 @@ public class FtPlayer : GLib.Object {
 	
 	/* Public functions */
 	public void stop () {
-		this.pipeline.set_state (State.NULL);
+		this.pipeline.set_state (Gst.State.NULL);
 	}
 
 	public void play_pause () {
@@ -159,11 +159,11 @@ public class FtPlayer : GLib.Object {
 		// TODO: smooth transitions
 		if (state == State.PLAYING) {
 			//TODO: change button: this.play_button = new Button.from_stock (STOCK_MEDIA_PAUSE);
-			this.pipeline.set_state (State.PAUSED);
+			this.pipeline.set_state (Gst.State.PAUSED);
 		} else {
 			this.pipeline.set ("uri", "file://" + this.music_path + "/" 
 						  + this.playlist.nth_data (track));
-			this.pipeline.set_state (State.PLAYING);
+			this.pipeline.set_state (Gst.State.PLAYING);
 		}
 	}
 
@@ -174,10 +174,10 @@ public class FtPlayer : GLib.Object {
 		track++;
 		track_info = "";
 		update_track (track_count, track, track_info);
-		this.pipeline.set_state (State.READY);
+		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", "file://" + this.music_path + "/"
 				+ this.playlist.nth_data (track) );
-		this.pipeline.set_state (State.PLAYING);
+		this.pipeline.set_state (Gst.State.PLAYING);
 		// TODO: preserve state
 	}
 	
@@ -188,10 +188,10 @@ public class FtPlayer : GLib.Object {
 		track--;
 		track_info = "";
 		update_track (track_count, track, track_info);
-		this.pipeline.set_state (State.READY);
+		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", "file://" + this.music_path + "/"
 				+ this.playlist.nth_data (track) );
-		this.pipeline.set_state (State.PLAYING);
+		this.pipeline.set_state (Gst.State.PLAYING);
 		// TODO: preserve state
 	}
 }
