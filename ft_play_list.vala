@@ -17,7 +17,6 @@
 */
 
 using GLib;
-using FtConfiguration;
 
 public class FtPlayList : GLib.Object {
 
