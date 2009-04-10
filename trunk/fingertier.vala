@@ -85,7 +85,7 @@ public class FtPlayer : GLib.Object {
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tags); // TODO: C warning?
-		update_track (this.track_count, this.track, this.track_info);
+		track_data_changed (this.track_count, this.track, this.track_info);
 	}
 	
 	/* Callback for errors in playbin */
@@ -143,21 +143,20 @@ public class FtPlayer : GLib.Object {
 		}
 
 		this.track_count = playlist.length ();
-		update_track (track_count, 1, track_info);
+		track_data_changed (track_count, 1, track_info);
 	}
 	
 	/* Public signals */
-	public signal void update_track (uint track_count, uint track, string info);
+	public signal void track_data_changed (uint track_count, uint track, string info);
 	
 	/* Public functions */
-	public void stop () { // TODO: public? stop? unload?
+	public void unload_pipeline () {
 		this.pipeline.set_state (Gst.State.NULL);
 	}
 
 	public void play_pause () {
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
-		
 		this.pipeline.get_state (out state, null, time);
 		
 		// TODO: smooth transitions
@@ -174,28 +173,42 @@ public class FtPlayer : GLib.Object {
 		if (track >= playlist.length () - 1)
 			return;
 		
+		Gst.State old_state;
+		Gst.ClockTime time = Gst.util_get_timestamp ();
+		this.pipeline.get_state (out old_state, null, time);
+		
 		track++;
 		track_info = "";
-		update_track (track_count, track, track_info);
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", "file://" + this.music_path + "/"
-				+ this.playlist.nth_data (track) );
-		this.pipeline.set_state (Gst.State.PLAYING);
-		// TODO: preserve state
+						   + this.playlist.nth_data (track) );
+		track_data_changed (track_count, track, track_info);
+		
+		if (old_state == State.PLAYING)
+			this.pipeline.set_state (Gst.State.PLAYING);
+		else
+			this.pipeline.set_state (Gst.State.PAUSED);
 	}
 	
 	public void previous () {
 		if (track <= 0)
 			return;
 		
+		Gst.State old_state;
+		Gst.ClockTime time = Gst.util_get_timestamp ();
+		this.pipeline.get_state (out old_state, null, time);
+		
 		track--;
 		track_info = "";
-		update_track (track_count, track, track_info);
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", "file://" + this.music_path + "/"
 				+ this.playlist.nth_data (track) );
-		this.pipeline.set_state (Gst.State.PLAYING);
-		// TODO: preserve state
+		track_data_changed (track_count, track, track_info);
+
+		if (old_state == State.PLAYING)
+			this.pipeline.set_state (Gst.State.PLAYING);
+		else
+			this.pipeline.set_state (Gst.State.PAUSED);
 	}
 }
 
