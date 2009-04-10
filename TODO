@@ -1,0 +1,9 @@
+TODO:
+
+  * create psyeudo random and a sorted playlist on startup (or demand)
+  * save playlist as efficient file (just the paths?)
+  * save current song (line in playlist), playlist type and path in config
+  * display first image (or cover.jpg) in folder as cover
+  * should pause on call
+  * should prevent the phone from sleeping while playing
+  * 'Aux' button should play next song if phone is locked

@@ -1,0 +1,34 @@
+===============
+  Fingertier
+===============
+
+Fingertier (German for the Aye-eye) is a minimalistic finger friendly music player for mobile devices. It is optimised for smart phones with small touch screens, like the OpenMoko Freerunner.
+
+Dependencies:
+ * Vala
+ * GTK+2.0
+ * Gstreamer
+
+Build: 
+ type 'make'
+
+Run:
+ type 'make test'
+
+
+
+GTK layout:
+
++------------------------+
+|                        |
+|       cover image      |
+|                        |
++------------------------+
+|         artist         |
+|         title          |
+|         album          |
++------------------------+
+|         3/120          |
++------------------------+
+| prev, play/pause, next |
++------------------------+
