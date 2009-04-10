@@ -21,7 +21,7 @@ using Gst;
 
 public class FtPlayer : GLib.Object {
 
-	private FtPlayList pl;
+	//private FtPlayList pl;
 	private Gst.Element pipeline;
 	
 	// just for prototyping. Will be moved into other classes.
@@ -61,7 +61,7 @@ public class FtPlayer : GLib.Object {
 		Gst.State new_state;
 		Gst.State old_state;
 		message.parse_state_changed (out old_state, out new_state, null);
-		stdout.printf ("state changed! old: %u new: %u \n", old_state, new_state);
+		//stdout.printf ("state changed! old: %u new: %u \n", old_state, new_state);
 		/* Possible states: VOID_PENDING, NULL, READY, PAUSED, PLAYING */
 		
 		//if (new_state == State.PAUSED && old_state == State.READY) {
@@ -135,7 +135,7 @@ public class FtPlayer : GLib.Object {
 		}
 		
 		foreach (string song in playlist) {
-			stdout.printf ("%s\n", song);
+			stdout.printf ("track: %s\n", song);
 		}
 
 		this.track_count = playlist.length ();

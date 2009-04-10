@@ -19,15 +19,14 @@
 using GLib;
 
 public class FtConfiguration : GLib.Object {
-/*
-	private string library_path;
-	private int playlist_generation_timestamp;
-	private int playlist_type;
-	private int playlist_current_track;
-*/
+
+	//private string library_path;
+	//private uint playlist_generation_timestamp;
+	//private uint playlist_type; // TODO: use enumeration
+	public uint playlist_current_track;
+
 	construct {
 		// TODO: read config file
-		
 		// Environment.get_home_dir ()
 	}
 

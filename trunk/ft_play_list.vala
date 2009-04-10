@@ -20,7 +20,7 @@ using GLib;
 
 public class FtPlayList : GLib.Object {
 
-	private FtConfiguration config;
+	//private FtConfiguration config;
 
 	construct {
 		// TODO: generate playlist if needed. read the library folder recursively
@@ -29,41 +29,46 @@ public class FtPlayList : GLib.Object {
 		
 	}
 	
-	public void set_type(int type) { // use enumeration not int
+	public void set_type (int type) { // use enumeration not int
 		// TODO
 	}
 	
-	public bool do_shuffle() {
+	public bool do_shuffle () {
 		// TODO: shuffle on demand
 		return false;
 	}
 	
-	public bool is_shuffle() {
+	public bool is_shuffle () {
 		// TODO
 		return false;
 	}
 	
-	public string get_current_track() {
+	public string get_current_track_uri () {
 		// TODO
 		return "";
 	}
 	
-	public string get_next_track() {
+	public string get_next_track_uri () {
 		// TODO
 		return "";
 	}
 	
-	public string get_last_track() {
+	public string get_last_track_uri () {
 		// TODO
 		return "";
 	}
 	
-	public int tracknumber() {
+	public string get_cover_uri () {
+		// TODO
+		return "";
+	}
+	
+	public int get_tracknumber () {
 		// TODO
 		return 0;
 	}
 	
-	public int length() {
+	public int get_length () {
 		// TODO
 		return 0;
 	}
