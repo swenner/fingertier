@@ -48,7 +48,16 @@ public class FtPlayerGTK : FtPlayer {
 														Gtk.IconSize.DIALOG);
 		play_button.set_image (play_pause_img);
 		play_button.set_size_request (100, 100);
-		play_button.clicked += play_pause;
+		play_button.clicked += (s) => {
+			string stock_id;
+			//Gtk.IconSize size;
+			this.play_pause_img.get_stock (out stock_id, null);
+			if (stock_id == STOCK_MEDIA_PLAY)
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE, Gtk.IconSize.DIALOG);
+			else
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY, Gtk.IconSize.DIALOG);
+			play_pause ();
+		};
 
 		var next_button = new Gtk.Button ();
 		var next_img = new Gtk.Image.from_stock (STOCK_MEDIA_NEXT, 
