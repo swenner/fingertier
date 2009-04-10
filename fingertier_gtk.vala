@@ -91,6 +91,8 @@ public class FtPlayerGTK : FtPlayer {
 			this.stop ();
 			Gtk.main_quit();
 		};
+		
+		update_widgets (this.track_count, this.track, this.track_info);
 	}
 	
 	private void update_widgets (uint track_count, uint track, string info) {

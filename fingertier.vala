@@ -26,9 +26,9 @@ public class FtPlayer : GLib.Object {
 	
 	// just for prototyping. Will be moved into other classes.
 	private GLib.List<string> playlist;
-	private uint track;
-	private uint track_count;
-	private string track_info;
+	public uint track;
+	public uint track_count;
+	public string track_info;
 	public string music_path;
 	// end
 
@@ -42,8 +42,6 @@ public class FtPlayer : GLib.Object {
 
 	private void setup_gstreamer () {
 		pipeline = ElementFactory.make ("playbin", "finger_playbin");
-		
-		// TODO: read tags from the first track
 
 		var bus = pipeline.get_bus ();
 		bus.add_signal_watch ();
@@ -51,6 +49,12 @@ public class FtPlayer : GLib.Object {
 		bus.message["eos"] += this.gst_end_of_stream_cb;
 		bus.message["state-changed"] += this.gst_state_changed_cb;
 		bus.message["error"] += this.gst_error_cb;
+		
+		/* hack to read the tags from the first track */
+		this.pipeline.set ("uri", "file://" + this.music_path + "/" 
+						  + this.playlist.nth_data (this.track));
+		this.pipeline.set_state (Gst.State.PLAYING);
+		this.pipeline.set_state (Gst.State.PAUSED);
 	}
 	
 	/* Callback for state-change in playbin */
@@ -80,7 +84,7 @@ public class FtPlayer : GLib.Object {
 		TagList tag_list;
 
 		message.parse_tag (out tag_list);
-		tag_list.foreach (this.foreach_tag); // TODO: C warning?
+		tag_list.foreach (this.save_tags); // TODO: C warning?
 		update_track (this.track_count, this.track, this.track_info);
 	}
 	
@@ -99,12 +103,12 @@ public class FtPlayer : GLib.Object {
 	}
 
 	/* Fetch value of certain tags */
-	private void foreach_tag (Gst.TagList list, string tag) {
+	private void save_tags (Gst.TagList list, string tag) {
 		Gst.Value value;
 
 		if (list.copy_value (out value, list, tag)) {
 			if (tag == "title" || tag == "artist" || tag == "album") {
-				stdout.printf ("tag: %s, %s\n", tag, value.get_string ());
+				stdout.printf ("tag: %s: %s\n", tag, value.get_string ());
 				this.track_info += value.get_string () + "\n";
 			}
 		}
@@ -146,7 +150,7 @@ public class FtPlayer : GLib.Object {
 	public signal void update_track (uint track_count, uint track, string info);
 	
 	/* Public functions */
-	public void stop () {
+	public void stop () { // TODO: public? stop? unload?
 		this.pipeline.set_state (Gst.State.NULL);
 	}
 
