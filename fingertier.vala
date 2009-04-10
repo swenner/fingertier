@@ -110,7 +110,7 @@ public class FtPlayer : GLib.Object {
 		}
 	}
 
-	// REMOVE: a quick hack
+	// REMOVE: it's a quick hack
 	private void build_playlist () {
 		File dir;
 		FileInfo fileInfo;
@@ -207,4 +207,3 @@ public static int main (string[] args) {
 	
 	return 0;
 }
-
