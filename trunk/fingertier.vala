@@ -17,11 +17,9 @@
 */
 
 using GLib;
-using Gtk;
 using Gst;
-using FtPlayList;
 
-public class FtMusicPlayer : Gtk.Window {
+public class FtPlayer : GLib.Object {
 
 	private FtPlayList pl;
 	private Gst.Element pipeline;
@@ -30,65 +28,16 @@ public class FtMusicPlayer : Gtk.Window {
 	private GLib.List<string> playlist;
 	private uint track;
 	private uint track_count;
-	private string music_path;
-	private Gtk.Label label;
-	private Gtk.Label label2;
-	private Gtk.Button play_button; // TODO: use image pixbuf
-	private Gdk.Pixbuf cover;
+	private string track_info;
+	public string music_path;
 	// end
 
 	construct {
 		music_path = Environment.get_home_dir () + 
-			"/Desktop/moko-player/fingertier/music";
-		create_widgets ();
+			"/Desktop/moko-player/music";
+		track_info = "";
 		build_playlist ();
 		setup_gstreamer ();
-	}
-
-	private void create_widgets () {
-		var vbox = new VBox (false, 0);
-
-		var previous_button = new Button.from_stock (STOCK_MEDIA_PREVIOUS);
-		previous_button.clicked += previous;
-		this.play_button = new Button.from_stock (STOCK_MEDIA_PLAY);
-		play_button.set_size_request(-1, 100);
-		play_button.clicked += play_pause;
-		var next_button = new Button.from_stock (STOCK_MEDIA_NEXT);
-		next_button.clicked += next;
-
-		var bbox = new Gtk.HButtonBox ();
-		bbox.set_layout(Gtk.ButtonBoxStyle.CENTER);
-		bbox.add (previous_button);
-		bbox.add (play_button);
-		bbox.add (next_button);
-		
-		label = new Gtk.Label ("");
-		label.set_justify(Gtk.Justification.CENTER);
-		
-		label2 = new Gtk.Label ("");
-		label2.set_justify(Gtk.Justification.CENTER);
-		
-		try {
-			this.cover = new Gdk.Pixbuf.from_file_at_size (music_path + "/cover.jpg", 300, 300);
-		} catch (GLib.Error e) {
-			GLib.warning ("%s\n", e.message);
-		}
-		var image = new Image.from_pixbuf (cover);
-		
-		vbox.pack_start (image, false, true, 0);
-		vbox.pack_end (bbox, false, true, 0);
-		vbox.pack_end (label2, false, true, 0);
-		vbox.pack_end (label, false, true, 0);
-		this.add (vbox);
-		
-		this.title = "Fingertier Music Player";
-		this.set_default_size (480, 600); /* OM GTA2 screen size: 480x640 */
-		this.set_border_width (16);
-		this.position = Gtk.WindowPosition.CENTER;
-		this.destroy += (source) => {
-			this.pipeline.set_state (State.NULL);
-			Gtk.main_quit();
-		};
 	}
 
 	private void setup_gstreamer () {
@@ -109,9 +58,8 @@ public class FtMusicPlayer : Gtk.Window {
 		if (message.src != this.pipeline)
 			return;
 		
-		State new_state;
-		State old_state;
-
+		Gst.State new_state;
+		Gst.State old_state;
 		message.parse_state_changed (out old_state, out new_state, null);
 		stdout.printf ("state changed! old: %u new: %u \n", old_state, new_state);
 		/* Possible states: VOID_PENDING, NULL, READY, PAUSED, PLAYING */
@@ -132,8 +80,8 @@ public class FtMusicPlayer : Gtk.Window {
 		TagList tag_list;
 
 		message.parse_tag (out tag_list);
-		tag_list.foreach (this.foreach_tag);
-		// TODO: C warning?
+		tag_list.foreach (this.foreach_tag); // TODO: C warning?
+		update_track (this.track_count, this.track, this.track_info);
 	}
 	
 	/* Callback for errors in playbin */
@@ -157,14 +105,12 @@ public class FtMusicPlayer : Gtk.Window {
 		if (list.copy_value (out value, list, tag)) {
 			if (tag == "title" || tag == "artist" || tag == "album") {
 				stdout.printf ("tag: %s, %s\n", tag, value.get_string ());
-				string info = "<span size=\"xx-large\">" + this.label.get_label() 
-						+ value.get_string () + "</span>\n";
-				this.label.set_markup (info);
+				this.track_info += value.get_string () + "\n";
 			}
 		}
 	}
 
-	/* a quick hack */
+	// REMOVE: a quick hack
 	private void build_playlist () {
 		File dir;
 		FileInfo fileInfo;
@@ -193,11 +139,17 @@ public class FtMusicPlayer : Gtk.Window {
 		}
 
 		this.track_count = playlist.length ();
-		string data = "<span size=\"xx-large\">1/%u</span>\n".printf (track_count);
-		this.label2.set_markup (data);
+		update_track (track_count, 1, track_info);
+	}
+	
+	/* Public signals */
+	public signal void update_track (uint track_count, uint track, string info);
+	
+	/* Public functions */
+	public void stop () {
+		this.pipeline.set_state (State.NULL);
 	}
 
-	/* GTK callbacks */
 	public void play_pause () {
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
@@ -220,14 +172,13 @@ public class FtMusicPlayer : Gtk.Window {
 			return;
 		
 		track++;
-		this.label.set_label ("");
-		string data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track+1, track_count);
-		this.label2.set_markup (data);
+		track_info = "";
+		update_track (track_count, track, track_info);
 		this.pipeline.set_state (State.READY);
 		this.pipeline.set ("uri", "file://" + this.music_path + "/"
 				+ this.playlist.nth_data (track) );
 		this.pipeline.set_state (State.PLAYING);
-		
+		// TODO: preserve state
 	}
 	
 	public void previous () {
@@ -235,26 +186,25 @@ public class FtMusicPlayer : Gtk.Window {
 			return;
 		
 		track--;
-		string data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track+1, track_count);
-		this.label2.set_markup (data);
-		this.label.set_label ("");
+		track_info = "";
+		update_track (track_count, track, track_info);
 		this.pipeline.set_state (State.READY);
 		pipeline.set ("uri", "file://" + this.music_path + "/"
 				+ this.playlist.nth_data (track) );
 		this.pipeline.set_state (State.PLAYING);
+		// TODO: preserve state
 	}
-	
-	/* GTK callbacks end */
-	
-	public static int main (string[] args) {
-    	Gst.init (ref args);
-    	Gtk.init (ref args);
+}
 
-    	var player_window = new FtMusicPlayer ();
-		player_window.show_all ();
 
-    	Gtk.main ();
-    	return 0;
-	}
+public static int main (string[] args) {
+	Gst.init (ref args);
+	
+	Gtk.init (ref args);
+	var player = new FtPlayerGTK ();
+	player.draw ();
+	Gtk.main ();
+	
+	return 0;
 }
 
