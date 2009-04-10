@@ -30,7 +30,7 @@ public class FtPlayerGTK : FtPlayer {
 	construct {
 		create_widgets ();
 		/* register signal handler */
-		this.update_track += update_widgets;
+		this.track_data_changed += update_widgets;
 	}
 	
 	private void create_widgets () {
@@ -97,7 +97,7 @@ public class FtPlayerGTK : FtPlayer {
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += (source) => {
-			this.stop ();
+			this.unload_pipeline ();
 			Gtk.main_quit();
 		};
 		
