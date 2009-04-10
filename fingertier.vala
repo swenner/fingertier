@@ -162,7 +162,6 @@ public class FtPlayer : GLib.Object {
 		
 		// TODO: smooth transitions
 		if (state == State.PLAYING) {
-			//TODO: change button: this.play_button = new Button.from_stock (STOCK_MEDIA_PAUSE);
 			this.pipeline.set_state (Gst.State.PAUSED);
 		} else {
 			this.pipeline.set ("uri", "file://" + this.music_path + "/" 
