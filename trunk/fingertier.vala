@@ -47,30 +47,13 @@ public class FtPlayer : GLib.Object {
 		bus.add_signal_watch ();
 		bus.message["tag"] += this.gst_tag_cb;
 		bus.message["eos"] += this.gst_end_of_stream_cb;
-		bus.message["state-changed"] += this.gst_state_changed_cb;
 		bus.message["error"] += this.gst_error_cb;
 		
-		/* hack to read the tags from the first track */
+		/* hack to read the tags of the first track */
 		this.pipeline.set ("uri", "file://" + this.music_path + "/" 
 						  + this.playlist.nth_data (this.track));
 		this.pipeline.set_state (Gst.State.PLAYING);
 		this.pipeline.set_state (Gst.State.PAUSED);
-	}
-	
-	/* Callback for state-change in playbin */
-	private void gst_state_changed_cb (Gst.Bus bus, Gst.Message message) {
-		if (message.src != this.pipeline)
-			return;
-		
-		Gst.State new_state;
-		Gst.State old_state;
-		message.parse_state_changed (out old_state, out new_state, null);
-		//stdout.printf ("state changed! old: %u new: %u \n", old_state, new_state);
-		/* Possible states: VOID_PENDING, NULL, READY, PAUSED, PLAYING */
-		
-		//if (new_state == State.PAUSED && old_state == State.READY) {
-			
-		//}
 	}
 
 	/* Callback if the end of a track is reached */
@@ -84,7 +67,7 @@ public class FtPlayer : GLib.Object {
 		TagList tag_list;
 
 		message.parse_tag (out tag_list);
-		tag_list.foreach (this.save_tags); // TODO: C warning?
+		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
 		track_data_changed (this.track_count, this.track, this.track_info);
 	}
 	
@@ -102,14 +85,14 @@ public class FtPlayer : GLib.Object {
 		critical ("GST playbin error: %s \nDebug: %s\n", msg, debug);
 	}
 
-	/* Fetch value of certain tags */
+	/* Fetch the value of certain tags */
 	private void save_tags (Gst.TagList list, string tag) {
-		Gst.Value value;
+		Gst.Value val;
 
-		if (list.copy_value (out value, list, tag)) {
+		if (list.copy_value (out val, list, tag)) {
 			if (tag == "title" || tag == "artist" || tag == "album") {
-				stdout.printf ("tag: %s: %s\n", tag, value.get_string ());
-				this.track_info += value.get_string () + "\n";
+				stdout.printf ("tag: %s: %s\n", tag, val.get_string ());
+				this.track_info += val.get_string () + "\n";
 			}
 		}
 	}
@@ -138,6 +121,7 @@ public class FtPlayer : GLib.Object {
 			GLib.warning ("%s\n", e.message);
 		}
 		
+		// DEBUG
 		foreach (string song in playlist) {
 			stdout.printf ("track: %s\n", song);
 		}
