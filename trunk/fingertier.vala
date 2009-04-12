@@ -29,11 +29,17 @@ public struct Track {
 	public string info; //TODO: more details?
 }	
 
+public enum PlayListMode {
+	NULL = 0,
+	SORTED,
+	SHUFFLED
+}
+
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
-	private Gst.Element pipeline;
-	private PlayList pl;
+	private Gst.Element pipeline;   /* a Gstreamer playbin */
+	private PlayList pl;			/* handles the state and the data of the player */
 	public Track? track { get; private set; }
 
 	construct {

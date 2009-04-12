@@ -39,14 +39,14 @@ public class PlayerGTK : Player {
 		var vbox = new Gtk.VBox (false, 0);
 
 		var previous_button = new Gtk.Button ();
-		var previous_img = new Gtk.Image.from_stock (STOCK_MEDIA_PREVIOUS, 
+		var previous_img = new Gtk.Image.from_stock (STOCK_MEDIA_PREVIOUS,
 													 Gtk.IconSize.DIALOG);
 		previous_button.set_image (previous_img);
 		previous_button.set_size_request (100, 100);
 		previous_button.clicked += previous;
 		
 		var play_button = new Gtk.Button ();
-		this.play_pause_img = new Gtk.Image.from_stock (STOCK_MEDIA_PLAY, 
+		this.play_pause_img = new Gtk.Image.from_stock (STOCK_MEDIA_PLAY,
 														Gtk.IconSize.DIALOG);
 		play_button.set_image (play_pause_img);
 		play_button.set_size_request (100, 100);
@@ -55,14 +55,16 @@ public class PlayerGTK : Player {
 			// NOTE: C warning: Patch submitted upstream.
 			this.play_pause_img.get_stock (out stock_id, null);
 			if (stock_id == STOCK_MEDIA_PLAY)
-				this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE, Gtk.IconSize.DIALOG);
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE,
+													Gtk.IconSize.DIALOG);
 			else
-				this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY, Gtk.IconSize.DIALOG);
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY,
+													Gtk.IconSize.DIALOG);
 			play_pause ();
 		};
 
 		var next_button = new Gtk.Button ();
-		var next_img = new Gtk.Image.from_stock (STOCK_MEDIA_NEXT, 
+		var next_img = new Gtk.Image.from_stock (STOCK_MEDIA_NEXT,
 												 Gtk.IconSize.DIALOG);
 		next_button.set_image (next_img);
 		next_button.set_size_request (100, 100);
