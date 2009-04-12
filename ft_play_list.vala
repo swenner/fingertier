@@ -35,20 +35,20 @@ public class PlayList : GLib.Object {
 		
 		build_playlist ();
 		
-		// TODO: generate playlists if needed. 
+		// TODO: generate playlist files if needed. 
 		// read the library folder recursively
 		// creates two files: one with sorted paths, one with shuffled paths
 		// (~/.fingertier/playlist-sorted, ~/.fingertier/playlist-shuffled)
 		
 	}
 	
-	public void set_mode (int type) { // use typed enumeration not int
+	public void set_mode (PlayListMode mode) {
 		// TODO: shuffled or sorted
 	}
 	
-	public int get_mode () { // use typed enumeration not int
+	public PlayListMode get_mode () {
 		// TODO: shuffled or sorted
-		return 0;
+		return PlayListMode.NULL;
 	}
 	
 	public bool do_shuffle () {
