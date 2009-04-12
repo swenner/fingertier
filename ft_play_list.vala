@@ -26,9 +26,8 @@ public class PlayList : GLib.Object {
 	
 	private GLib.List<string> playlist;
 	private string music_path;
-	
-	public uint track_number { get; private set; default = 0; } /* [0, length-1] */
-	public uint length { get; private set; default = 0; }
+	private uint track_number; /* [0, length-1] */ //{ get; private set; default = 0; } 
+	private uint length; //{ get; private set; default = 0; }
 
 	construct {
 		music_path = Environment.get_home_dir () + 
@@ -57,34 +56,44 @@ public class PlayList : GLib.Object {
 		return false;
 	}
 	
-	public string get_current_track_uri () {
-		string uri = "file://" + this.music_path + "/" + 
-					 this.playlist.nth_data (this.track_number);
-		return uri;
+	public Track? get_current_track () {
+		if (length <= 0)
+			return null;
+		return build_track ();
 	}
 	
-	public string get_next_track_uri () {
-		if (track_number >= length - 1)
-			return "";
+	public Track? get_next_track () { // TODO: C warning! Vala bug?
+		if (track_number >= length - 1) {
+			return null;
+		}
 		
 		track_number++;
-		string uri = "file://" + this.music_path + "/" + 
-					 this.playlist.nth_data (this.track_number);
-		return uri;
+		return build_track ();
 	}
-	
-	public string get_previous_track_uri () {
+	 
+	public Track? get_previous_track () { // TODO: C warning! Vala bug?
 		if (track_number <= 0)
-			return "";
+			return null;
 		
 		track_number--;
-		string uri = "file://" + this.music_path + "/" + 
-					 this.playlist.nth_data (this.track_number);
-		return uri;
+		return build_track ();
 	}
 	
-	public string get_cover_path () {
-		// TODO: make it dynamic
+	/* Private functions */
+	private Track build_track () {
+		Track t = Track () {
+			number = track_number,
+			pl_len = length,
+			uri = "file://" + this.music_path + "/" + 
+				  this.playlist.nth_data (this.track_number),
+			cover_path = get_cover_path (),
+			info = ""
+		};
+		return t;
+	}
+	
+	private string get_cover_path () {
+		// TODO: make it dynamic and robust
 		string path = this.music_path + "/cover.jpg";
 		return path;
 	}

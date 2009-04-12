@@ -81,10 +81,11 @@ public class PlayerGTK : Player {
 		track_label.set_justify (Gtk.Justification.CENTER);
 		
 		try {
-			this.cover = new Gdk.Pixbuf.from_file_at_size (pl.get_cover_path (), 300, 300);
+			this.cover = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 300, 300);
 		} catch (GLib.Error e) {
 			try {
 				/* fallback image */
+				// TODO: move into playlist
 				this.cover = new Gdk.Pixbuf.from_file_at_size (
 					"/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg", 250, 250);
 			} catch (GLib.Error e) {
@@ -106,15 +107,15 @@ public class PlayerGTK : Player {
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += Gtk.main_quit;
 		
-		track_data_changed (pl.length, pl.track_number, this.track.info);
+		track_data_changed ();
 	}
 	
-	private void update_widgets (uint track_count, uint track, string info) {
+	private void update_widgets () {
 		string data; 
-		data = "<span size=\"xx-large\">%s</span>\n".printf (info);
+		data = "<span size=\"xx-large\">%s</span>\n".printf (track.info);
 		this.info_label.set_markup (data);
 		
-		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track+1, track_count);
+		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number+1, track.pl_len);
 		this.track_label.set_markup (data);
 	}
 	

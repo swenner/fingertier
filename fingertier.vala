@@ -20,23 +20,25 @@ using GLib;
 using Gst;
 
 namespace Ft {
-
+	
 public struct Track {
 	public uint number;
+	public uint pl_len; /* length of the playlist */
 	public string uri;
-	public string info;
-}
+	public string cover_path;
+	public string info; //TODO: more details?
+}	
 
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
 	private Gst.Element pipeline;
-	public PlayList pl { get; private set; }
-	public Track track { get; private set; }
+	private PlayList pl;
+	public Track? track { get; private set; }
 
 	construct {
-		track.info = "";
 		pl = new PlayList ();
+		track = pl.get_current_track ();
 		setup_pipeline ();
 	}
 
@@ -55,7 +57,7 @@ public class Player : GLib.Object {
 		bus.message["error"] += this.gst_error_cb;
 	
 		/* hack to read the tags of the first track */
-		this.pipeline.set ("uri", pl.get_current_track_uri ());
+		this.pipeline.set ("uri", track.uri);
 		this.pipeline.set_state (Gst.State.PLAYING);
 		this.pipeline.set_state (Gst.State.PAUSED);
 	}
@@ -76,7 +78,7 @@ public class Player : GLib.Object {
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
-		track_data_changed (pl.length, pl.track_number, this.track.info);
+		track_data_changed ();
 	}
 
 	/* Callback for errors in playbin */
@@ -106,7 +108,7 @@ public class Player : GLib.Object {
 	}
 
 	/* Protected functions and signals */
-	protected signal void track_data_changed (uint track_count, uint track, string info);
+	protected signal void track_data_changed ();
 
 	/* Public functions */
 	public void play_pause () {
@@ -118,24 +120,24 @@ public class Player : GLib.Object {
 		if (state == State.PLAYING) {
 			this.pipeline.set_state (Gst.State.PAUSED);
 		} else {
-			this.pipeline.set ("uri", pl.get_current_track_uri ());
+			this.pipeline.set ("uri", track.uri);
 			this.pipeline.set_state (Gst.State.PLAYING);
 		}
 	}
 
 	public void next () {
-		string uri = pl.get_next_track_uri ();
-		if (uri == "")
+		Track? t = pl.get_next_track ();
+		if (t == null)
 			return;
 	
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 	
-		track.info = "";
+		track = t;
 		this.pipeline.set_state (Gst.State.READY);
-		this.pipeline.set ("uri", uri);
-		track_data_changed (pl.length, pl.track_number, this.track.info);
+		this.pipeline.set ("uri", track.uri);
+		track_data_changed ();
 	
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
@@ -144,18 +146,18 @@ public class Player : GLib.Object {
 	}
 
 	public void previous () {
-		string uri = pl.get_previous_track_uri ();
-		if (uri == "")
+		Track? t = pl.get_previous_track ();
+		if (t == null)
 			return;
 	
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 	
-		track.info = "";
+		track = t;
 		this.pipeline.set_state (Gst.State.READY);
-		pipeline.set ("uri", uri);
-		track_data_changed (pl.length, pl.track_number, this.track.info);
+		pipeline.set ("uri", track.uri);
+		track_data_changed ();
 
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
