@@ -34,7 +34,7 @@ public class FtPlayList : GLib.Object {
 		
 		build_playlist ();
 		
-		// TODO: generate playlist if needed. 
+		// TODO: generate playlists if needed. 
 		// read the library folder recursively
 		// creates two files: one with sorted paths, one with shuffled paths
 		// (~/.fingertier/playlist-sorted, ~/.fingertier/playlist-shuffled)

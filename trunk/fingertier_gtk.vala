@@ -102,10 +102,7 @@ public class FtPlayerGTK : FtPlayer {
 		this.window.set_default_size (480, 600); /* OM GTA02 screen size: 480x640 */
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
-		this.window.destroy += (source) => {
-			this.unload_pipeline ();
-			Gtk.main_quit();
-		};
+		this.window.destroy += Gtk.main_quit;
 		
 		track_data_changed (pl.length, pl.track_number, this.track_info);
 	}

@@ -23,16 +23,21 @@ public class FtPlayer : GLib.Object {
 
 	private Gst.Element pipeline;
 	
-	public string track_info;
-	public FtPlayList pl;
+	public string track_info; // TODO: remove me
+	public FtPlayList pl { get; private set; }
 
 	construct {
 		track_info = "";
 		pl = new FtPlayList ();
-		setup_gstreamer ();
+		setup_pipeline ();
+	}
+	
+	/* destructor */
+	~FtPlayer () {
+		unload_pipeline ();
 	}
 
-	private void setup_gstreamer () {
+	private void setup_pipeline () {
 		pipeline = ElementFactory.make ("playbin", "finger_playbin");
 
 		var bus = pipeline.get_bus ();
@@ -45,6 +50,10 @@ public class FtPlayer : GLib.Object {
 		this.pipeline.set ("uri", pl.get_current_track_uri ());
 		this.pipeline.set_state (Gst.State.PLAYING);
 		this.pipeline.set_state (Gst.State.PAUSED);
+	}
+	
+	private void unload_pipeline () {
+		this.pipeline.set_state (Gst.State.NULL);
 	}
 
 	/* Callback if the end of a track is reached */
@@ -88,14 +97,10 @@ public class FtPlayer : GLib.Object {
 		}
 	}
 	
-	/* Public signals */
-	public signal void track_data_changed (uint track_count, uint track, string info);
+	/* Protected functions and signals */
+	protected signal void track_data_changed (uint track_count, uint track, string info);
 	
 	/* Public functions */
-	public void unload_pipeline () {
-		this.pipeline.set_state (Gst.State.NULL);
-	}
-
 	public void play_pause () {
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
