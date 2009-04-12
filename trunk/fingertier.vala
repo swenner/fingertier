@@ -19,15 +19,20 @@
 using GLib;
 using Gst;
 
-public class FtPlayer : GLib.Object {
+public struct FtTrack {
+    public string info;
+}
 
-	private Gst.Element pipeline;
+
+public class FtPlayer : GLib.Object {
+	/* FtPlayer implements a music player without gui */
 	
-	public string track_info; // TODO: remove me
+	private Gst.Element pipeline;
 	public FtPlayList pl { get; private set; }
+	public FtTrack track { get; private set; }
 
 	construct {
-		track_info = "";
+		track.info = "";
 		pl = new FtPlayList ();
 		setup_pipeline ();
 	}
@@ -68,7 +73,7 @@ public class FtPlayer : GLib.Object {
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
-		track_data_changed (pl.length, pl.track_number, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track.info);
 	}
 	
 	/* Callback for errors in playbin */
@@ -92,7 +97,7 @@ public class FtPlayer : GLib.Object {
 		if (list.copy_value (out val, list, tag)) {
 			if (tag == "title" || tag == "artist" || tag == "album") {
 				stdout.printf ("tag: %s: %s\n", tag, val.get_string ());
-				this.track_info += val.get_string () + "\n";
+				this.track.info += val.get_string () + "\n";
 			}
 		}
 	}
@@ -124,10 +129,10 @@ public class FtPlayer : GLib.Object {
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 		
-		track_info = "";
+		track.info = "";
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", uri);
-		track_data_changed (pl.length, pl.track_number, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track.info);
 		
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
@@ -144,10 +149,10 @@ public class FtPlayer : GLib.Object {
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 		
-		track_info = "";
+		track.info = "";
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", uri);
-		track_data_changed (pl.length, pl.track_number, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track.info);
 
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
