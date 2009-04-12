@@ -104,7 +104,7 @@ public class FtPlayerGTK : FtPlayer {
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += Gtk.main_quit;
 		
-		track_data_changed (pl.length, pl.track_number, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track.info);
 	}
 	
 	private void update_widgets (uint track_count, uint track, string info) {
