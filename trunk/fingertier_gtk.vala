@@ -19,7 +19,9 @@
 using GLib;
 using Gtk;
 
-public class FtPlayerGTK : FtPlayer {
+namespace Ft {
+
+public class PlayerGTK : Player {
 	
 	private Gtk.Label info_label;
 	private Gtk.Label track_label;
@@ -121,3 +123,5 @@ public class FtPlayerGTK : FtPlayer {
 	}
 	
 }
+
+} /* namespace Ft end */

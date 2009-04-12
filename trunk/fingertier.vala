@@ -19,26 +19,29 @@
 using GLib;
 using Gst;
 
-public struct FtTrack {
-    public string info;
+namespace Ft {
+
+public struct Track {
+	public uint number;
+	public string uri;
+	public string info;
 }
 
+/* Ft.Player implements a music player without gui */
+public class Player : GLib.Object {
 
-public class FtPlayer : GLib.Object {
-	/* FtPlayer implements a music player without gui */
-	
 	private Gst.Element pipeline;
-	public FtPlayList pl { get; private set; }
-	public FtTrack track { get; private set; }
+	public PlayList pl { get; private set; }
+	public Track track { get; private set; }
 
 	construct {
 		track.info = "";
-		pl = new FtPlayList ();
+		pl = new PlayList ();
 		setup_pipeline ();
 	}
-	
+
 	/* destructor */
-	~FtPlayer () {
+	~Player () {
 		unload_pipeline ();
 	}
 
@@ -50,20 +53,20 @@ public class FtPlayer : GLib.Object {
 		bus.message["tag"] += this.gst_tag_cb;
 		bus.message["eos"] += this.gst_end_of_stream_cb;
 		bus.message["error"] += this.gst_error_cb;
-		
+	
 		/* hack to read the tags of the first track */
 		this.pipeline.set ("uri", pl.get_current_track_uri ());
 		this.pipeline.set_state (Gst.State.PLAYING);
 		this.pipeline.set_state (Gst.State.PAUSED);
 	}
-	
+
 	private void unload_pipeline () {
 		this.pipeline.set_state (Gst.State.NULL);
 	}
 
 	/* Callback if the end of a track is reached */
 	private void gst_end_of_stream_cb (Gst.Bus bus, Gst.Message message) {
-		stdout.printf ("EOS reached\n");
+		GLib.message ("End of stream (eos) reached.");
 		this.next();
 	}
 
@@ -75,7 +78,7 @@ public class FtPlayer : GLib.Object {
 		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
 		track_data_changed (pl.length, pl.track_number, this.track.info);
 	}
-	
+
 	/* Callback for errors in playbin */
 	private void gst_error_cb (Gst.Bus bus, Gst.Message message) {
 		string debug;
@@ -86,7 +89,7 @@ public class FtPlayer : GLib.Object {
 		if (error != null) {
 			msg = error.message;
 		}
-		
+	
 		GLib.critical ("GST playbin error: %s \nDebug: %s\n", msg, debug);
 	}
 
@@ -101,16 +104,16 @@ public class FtPlayer : GLib.Object {
 			}
 		}
 	}
-	
+
 	/* Protected functions and signals */
 	protected signal void track_data_changed (uint track_count, uint track, string info);
-	
+
 	/* Public functions */
 	public void play_pause () {
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out state, null, time);
-		
+	
 		// TODO: smooth transitions
 		if (state == State.PLAYING) {
 			this.pipeline.set_state (Gst.State.PAUSED);
@@ -124,31 +127,31 @@ public class FtPlayer : GLib.Object {
 		string uri = pl.get_next_track_uri ();
 		if (uri == "")
 			return;
-		
+	
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
-		
+	
 		track.info = "";
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", uri);
 		track_data_changed (pl.length, pl.track_number, this.track.info);
-		
+	
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
 		else
 			this.pipeline.set_state (Gst.State.PAUSED);
 	}
-	
+
 	public void previous () {
 		string uri = pl.get_previous_track_uri ();
 		if (uri == "")
 			return;
-		
+	
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
-		
+	
 		track.info = "";
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", uri);
@@ -161,12 +164,13 @@ public class FtPlayer : GLib.Object {
 	}
 }
 
+} /* namespace Ft end */
 
 public static int main (string[] args) {
 	Gst.init (ref args);
 	
 	Gtk.init (ref args);
-	var player = new FtPlayerGTK ();
+	var player = new Ft.PlayerGTK ();
 	player.draw ();
 	Gtk.main ();
 	

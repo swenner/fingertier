@@ -18,7 +18,9 @@
 
 using GLib;
 
-public class FtPlayList : GLib.Object {
+namespace Ft {
+
+public class PlayList : GLib.Object {
 
 	//TODO: private FtConfiguration config;
 	
@@ -119,3 +121,5 @@ public class FtPlayList : GLib.Object {
 		this.length = playlist.length ();
 	}
 }
+
+} /* namespace Ft end */
