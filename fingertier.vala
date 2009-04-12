@@ -82,7 +82,7 @@ public class FtPlayer : GLib.Object {
 			msg = error.message;
 		}
 		
-		critical ("GST playbin error: %s \nDebug: %s\n", msg, debug);
+		GLib.critical ("GST playbin error: %s \nDebug: %s\n", msg, debug);
 	}
 
 	/* Fetch the value of certain tags */
