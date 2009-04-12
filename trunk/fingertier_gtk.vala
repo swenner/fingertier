@@ -81,7 +81,13 @@ public class FtPlayerGTK : FtPlayer {
 		try {
 			this.cover = new Gdk.Pixbuf.from_file_at_size (music_path + "/cover.jpg", 300, 300);
 		} catch (GLib.Error e) {
-			GLib.warning ("%s\n", e.message);
+			try {
+				/* fallback image */
+				this.cover = new Gdk.Pixbuf.from_file_at_size (
+					"/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg", 300, 300);
+			} catch (GLib.Error e) {
+				GLib.warning ("%s\n", e.message);
+			}		
 		}
 		var image = new Gtk.Image.from_pixbuf (cover);
 		
