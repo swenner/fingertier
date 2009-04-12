@@ -79,12 +79,12 @@ public class FtPlayerGTK : FtPlayer {
 		track_label.set_justify (Gtk.Justification.CENTER);
 		
 		try {
-			this.cover = new Gdk.Pixbuf.from_file_at_size (music_path + "/cover.jpg", 300, 300);
+			this.cover = new Gdk.Pixbuf.from_file_at_size (pl.get_cover_path (), 300, 300);
 		} catch (GLib.Error e) {
 			try {
 				/* fallback image */
 				this.cover = new Gdk.Pixbuf.from_file_at_size (
-					"/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg", 300, 300);
+					"/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg", 250, 250);
 			} catch (GLib.Error e) {
 				GLib.warning ("%s\n", e.message);
 			}		
@@ -107,7 +107,7 @@ public class FtPlayerGTK : FtPlayer {
 			Gtk.main_quit();
 		};
 		
-		update_widgets (this.track_count, this.track, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track_info);
 	}
 	
 	private void update_widgets (uint track_count, uint track, string info) {

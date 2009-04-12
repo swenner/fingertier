@@ -21,22 +21,14 @@ using Gst;
 
 public class FtPlayer : GLib.Object {
 
-	//private FtPlayList pl;
 	private Gst.Element pipeline;
 	
-	// just for prototyping. Will be moved into other classes.
-	private GLib.List<string> playlist;
-	public uint track;
-	public uint track_count;
 	public string track_info;
-	public string music_path;
-	// end
+	public FtPlayList pl;
 
 	construct {
-		music_path = Environment.get_home_dir () + 
-			"/Desktop/moko-player/music";
 		track_info = "";
-		build_playlist ();
+		pl = new FtPlayList ();
 		setup_gstreamer ();
 	}
 
@@ -50,8 +42,7 @@ public class FtPlayer : GLib.Object {
 		bus.message["error"] += this.gst_error_cb;
 		
 		/* hack to read the tags of the first track */
-		this.pipeline.set ("uri", "file://" + this.music_path + "/" 
-						  + this.playlist.nth_data (this.track));
+		this.pipeline.set ("uri", pl.get_current_track_uri ());
 		this.pipeline.set_state (Gst.State.PLAYING);
 		this.pipeline.set_state (Gst.State.PAUSED);
 	}
@@ -68,7 +59,7 @@ public class FtPlayer : GLib.Object {
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
-		track_data_changed (this.track_count, this.track, this.track_info);
+		track_data_changed (pl.length, pl.track_number, this.track_info);
 	}
 	
 	/* Callback for errors in playbin */
@@ -96,39 +87,6 @@ public class FtPlayer : GLib.Object {
 			}
 		}
 	}
-
-	// REMOVE: it's a quick hack
-	private void build_playlist () {
-		File dir;
-		FileInfo fileInfo;
-		
-		playlist = new GLib.List<string> ();
-		track = 0;
-		
-		dir = File.new_for_path (this.music_path);
-
-		try {
-			FileEnumerator enumerator = dir.enumerate_children ("*", FileQueryInfoFlags.NONE, null);
-
-			while ((fileInfo = enumerator.next_file (null)) != null)
-			{
-				// TODO: check for music files and add them recursively
-				playlist.append(fileInfo.get_name());
-			}
-			enumerator.close(null);
-
-		} catch (GLib.Error e) {
-			GLib.warning ("%s\n", e.message);
-		}
-		
-		// DEBUG
-		foreach (string song in playlist) {
-			stdout.printf ("track: %s\n", song);
-		}
-
-		this.track_count = playlist.length ();
-		track_data_changed (track_count, 1, track_info);
-	}
 	
 	/* Public signals */
 	public signal void track_data_changed (uint track_count, uint track, string info);
@@ -147,26 +105,24 @@ public class FtPlayer : GLib.Object {
 		if (state == State.PLAYING) {
 			this.pipeline.set_state (Gst.State.PAUSED);
 		} else {
-			this.pipeline.set ("uri", "file://" + this.music_path + "/" 
-						  + this.playlist.nth_data (track));
+			this.pipeline.set ("uri", pl.get_current_track_uri ());
 			this.pipeline.set_state (Gst.State.PLAYING);
 		}
 	}
 
 	public void next () {
-		if (track >= playlist.length () - 1)
+		string uri = pl.get_next_track_uri ();
+		if (uri == "")
 			return;
 		
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 		
-		track++;
 		track_info = "";
 		this.pipeline.set_state (Gst.State.READY);
-		this.pipeline.set ("uri", "file://" + this.music_path + "/"
-						   + this.playlist.nth_data (track) );
-		track_data_changed (track_count, track, track_info);
+		this.pipeline.set ("uri", uri);
+		track_data_changed (pl.length, pl.track_number, this.track_info);
 		
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
@@ -175,19 +131,18 @@ public class FtPlayer : GLib.Object {
 	}
 	
 	public void previous () {
-		if (track <= 0)
+		string uri = pl.get_previous_track_uri ();
+		if (uri == "")
 			return;
 		
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
 		
-		track--;
 		track_info = "";
 		this.pipeline.set_state (Gst.State.READY);
-		pipeline.set ("uri", "file://" + this.music_path + "/"
-				+ this.playlist.nth_data (track) );
-		track_data_changed (track_count, track, track_info);
+		pipeline.set ("uri", uri);
+		track_data_changed (pl.length, pl.track_number, this.track_info);
 
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
