@@ -20,4 +20,5 @@ Run:
 Configuration:
  Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
  library folder.
+ Files called 'cover.jpg' are displayed by the player.
 
