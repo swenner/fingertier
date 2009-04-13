@@ -117,7 +117,7 @@ public class PlayerGTK : Player {
 		data = "<span size=\"xx-large\">%s</span>\n".printf (track.info);
 		this.info_label.set_markup (data);
 		
-		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number+1, track.pl_len);
+		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number, track.pl_len);
 		this.track_label.set_markup (data);
 	}
 	
