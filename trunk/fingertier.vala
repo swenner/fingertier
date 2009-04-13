@@ -27,14 +27,16 @@ public class Track {
 	public uint pl_len; /* length of the playlist */
 	public string uri;
 	public string cover_path;
-	public string info; //TODO: more details?
+	public string artist;
+	public string title;
+	public string album;
 	
-	public Track (uint n, uint l, string u, string cp, string i) {
+	public Track (uint n, uint l, string u, string cp) {
 		number = n;
 		pl_len = l;
 		uri = u;
 		cover_path = cp;
-		info = i;
+		artist = ""; title = ""; album = "";
 	}
 }	
 
@@ -108,12 +110,21 @@ public class Player : GLib.Object {
 	/* Fetch the value of certain tags */
 	private void save_tag (Gst.TagList list, string tag) {
 		Gst.Value val;
-
-		if (list.copy_value (out val, list, tag)) {
-			if (tag == "title" || tag == "artist" || tag == "album") {
+		
+		list.copy_value (out val, list, tag);
+		switch (tag) {
+			case ("title"):
 				stdout.printf ("tag: %s: %s\n", tag, val.get_string ());
-				this.track.info += val.get_string () + "\n";
-			}
+				this.track.title = val.get_string ();
+				break;
+			case ("artist"):
+				stdout.printf ("tag: %s: %s\n", tag, val.get_string ());
+				this.track.artist = val.get_string ();
+				break;
+			case ("album"):
+				stdout.printf ("tag: %s: %s\n", tag, val.get_string ());
+				this.track.album = val.get_string ();
+				break;
 		}
 	}
 

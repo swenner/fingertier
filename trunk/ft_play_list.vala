@@ -85,7 +85,7 @@ public class PlayList : GLib.Object {
 		Track t = new Track (conf.track_number + 1,
 					length, "file://" + conf.library_path + "/" + 
 					this.playlist.nth_data (conf.track_number), 
-					get_cover_path (), "");
+					get_cover_path ());
 		return t;
 	}
 	
