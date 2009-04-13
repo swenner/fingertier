@@ -22,13 +22,14 @@ namespace Ft {
 
 public class PlayList : GLib.Object {
 
-	//TODO: private FtConfiguration config;
+	private Configuration conf;
 	private GLib.List<string> playlist;
 	private string music_path;
 	private uint track_number; /* [0, length-1] */
 	private uint length;
 
 	construct {
+		conf = new Configuration ();
 		music_path = Environment.get_home_dir () + 
 			"/Desktop/moko-player/music";
 		
