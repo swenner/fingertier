@@ -38,7 +38,7 @@ public class Configuration : GLib.Object {
 	}
 	
 	public bool read () {
-		// TODO: optimise this horrible function
+		// TODO: rewrite this horrible function
 		var dir = File.new_for_path (Environment.get_home_dir () + 
 										"/.fingertier");
 		if (!dir.query_exists (null)) {
