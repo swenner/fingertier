@@ -1,10 +1,28 @@
 TODO:
 
-  * create psyeudo random and a sorted playlist on startup (or demand)
+  * create psyeudo random and a sorted playlist files on startup (or demand)
   * save playlist as efficient file (just the paths?)
-  * save current song (line in playlist), playlist type and path in config
+  * implement saving of the configuration
   * display first image (or cover.jpg) in folder as cover
   * should pause on call
   * should prevent the phone from sleeping while playing
   * 'Aux' button should play next song if phone is locked
   * configuration menu
+  * library creation progress bar. GUI should never be locked.
+
+
+GTK layout:
+
++------------------------+
+|                        |
+|       cover image      |
+|                        |
++------------------------+
+|         artist         |
+|         title          |
+|         album          |
++------------------------+
+|         3/120          |
++------------------------+
+| prev, play/pause, next |
++------------------------+
