@@ -32,6 +32,11 @@ public class Configuration : GLib.Object {
 		read ();
 	}
 	
+	/* destructor */
+	~Configuration () {
+		write ();
+	}
+	
 	public bool read () {
 		// TODO: optimise this horrible function
 		var dir = File.new_for_path (Environment.get_home_dir () + 
