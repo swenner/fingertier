@@ -24,15 +24,10 @@ public class PlayList : GLib.Object {
 
 	private Configuration conf;
 	private GLib.List<string> playlist;
-	private string music_path;
-	private uint track_number; /* [0, length-1] */
 	private uint length;
 
 	construct {
 		conf = new Configuration ();
-		music_path = Environment.get_home_dir () + 
-			"/Desktop/moko-player/music";
-		
 		build_playlist ();
 		
 		// TODO: generate playlist files if needed. 
@@ -63,29 +58,29 @@ public class PlayList : GLib.Object {
 	}
 	
 	public Track? get_next_track () { // TODO: C warning! Vala bug?
-		if (track_number >= length - 1) {
+		if (conf.track_number >= length - 1) {
 			return null;
 		}
 		
-		track_number++;
+		conf.track_number++;
 		return build_track ();
 	}
 	 
 	public Track? get_previous_track () { // TODO: C warning! Vala bug?
-		if (track_number <= 0)
+		if (conf.track_number <= 0)
 			return null;
 		
-		track_number--;
+		conf.track_number--;
 		return build_track ();
 	}
 	
 	/* Private functions */
 	private Track build_track () {
 		Track t = Track () {
-			number = track_number + 1,
+			number = conf.track_number + 1,
 			pl_len = length,
-			uri = "file://" + this.music_path + "/" + 
-				  this.playlist.nth_data (this.track_number),
+			uri = "file://" + conf.library_path + "/" + 
+				  this.playlist.nth_data (conf.track_number),
 			cover_path = get_cover_path (),
 			info = ""
 		};
@@ -94,7 +89,7 @@ public class PlayList : GLib.Object {
 	
 	private string get_cover_path () {
 		// TODO: make it dynamic and robust
-		string path = this.music_path + "/cover.jpg";
+		string path = conf.library_path + "/cover.jpg";
 		return path;
 	}
 	
@@ -105,7 +100,7 @@ public class PlayList : GLib.Object {
 		
 		playlist = new GLib.List<string> ();
 		
-		dir = File.new_for_path (this.music_path);
+		dir = File.new_for_path (conf.library_path);
 
 		try {
 			FileEnumerator enumerator = dir.enumerate_children ("*", FileQueryInfoFlags.NONE, null);
