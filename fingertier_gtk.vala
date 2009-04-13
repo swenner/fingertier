@@ -24,7 +24,7 @@ namespace Ft {
 public class PlayerGTK : Player {
 	
 	private Gtk.Label info_label;
-	private Gtk.Label track_label;
+	private Gtk.Label track_number_label;
 	private Gtk.Image play_pause_img;
 	private Gtk.Image cover;
 	private Gtk.Window window;
@@ -78,16 +78,17 @@ public class PlayerGTK : Player {
 		
 		info_label = new Gtk.Label ("");
 		info_label.set_justify (Gtk.Justification.CENTER);
-		
-		track_label = new Gtk.Label ("");
-		track_label.set_justify (Gtk.Justification.CENTER);
+
+		track_number_label = new Gtk.Label ("");
+		track_number_label.set_justify (Gtk.Justification.CENTER);
 		
 		this.cover = new Gtk.Image ();
 		
 		vbox.pack_start (cover, false, true, 0);
 		vbox.pack_end (bbox, false, true, 0);
-		vbox.pack_end (track_label, false, true, 0);
+		vbox.pack_end (track_number_label, false, true, 0);
 		vbox.pack_end (info_label, false, true, 0);
+		
 		this.window = new Gtk.Window (Gtk.WindowType.TOPLEVEL);
 		this.window.add (vbox);
 		
@@ -102,11 +103,30 @@ public class PlayerGTK : Player {
 	
 	private void update_widgets () {
 		string data; 
-		data = "<span size=\"xx-large\">%s</span>\n".printf (track.info);
+		string artist, title, album;
+		
+		if (track.artist.len() > 34)
+			artist = track.artist.substring (0, 33) + "...";
+		else
+			artist = track.artist;
+		
+		if (track.title.len() > 34)
+			title = track.title.substring (0, 33) + "...";
+		else
+			title = track.title;
+		
+		if (track.album.len() > 34)
+			album = track.album.substring (0, 33) + "...";
+		else
+			album = track.album;
+		
+		data = "<span size=\"xx-large\">%s\n%s\n%s</span>\n".printf (artist,
+																	 title,
+																	 album);
 		this.info_label.set_markup (data);
 		
 		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number, track.pl_len);
-		this.track_label.set_markup (data);
+		this.track_number_label.set_markup (data);
 		
 		try {
 			var pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 300, 300);
