@@ -72,16 +72,20 @@ public class Configuration : GLib.Object {
 			while ((line = istream.read_line (null, null)) != null) {
 				if (line.has_prefix ("LIBRARY_PATH=")) {
 					this.library_path = line.substring (13, -1);
-					stdout.printf ("%s\n", this.library_path);
+					stdout.printf ("library_path = %s\n", this.library_path);
 				} else if (line.has_prefix ("TRACK_NUMBER=")) {
-					this.track_number = line.substring (13, -1).to_int ();
-					stdout.printf ("%u\n", this.track_number);
+					uint t = line.substring (13, -1).to_int ();
+					if (t > 0)
+						this.track_number = t - 1;
+					else
+						this.track_number = 0;
+					stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
 				} else if (line.has_prefix ("MODE=")) {
 					this.mode = (PlayListMode) line.substring (5, -1).to_int ();
-					stdout.printf ("%u\n", this.mode);
+					stdout.printf ("mode = %u\n", this.mode);
 				} else if (line.has_prefix ("TIMESTAMP=")) {
 					this.playlist_generation_timestamp = line.substring (10, -1).to_int ();
-					stdout.printf ("%u\n", this.playlist_generation_timestamp);
+					stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
 				} else {
 					GLib.message ("This configuration file contains garbage.");
 				}
