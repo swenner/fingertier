@@ -23,7 +23,7 @@ namespace Ft {
 public class PlayList : GLib.Object {
 
 	private Configuration conf;
-	private GLib.List<string> playlist;
+	private GLib.List<string> playlist; /* contains paths relative to the library path */
 	private uint length;
 
 	construct {
@@ -42,8 +42,7 @@ public class PlayList : GLib.Object {
 	}
 	
 	public PlayListMode get_mode () {
-		// TODO: shuffled or sorted
-		return PlayListMode.NULL;
+		return conf.mode;
 	}
 	
 	public bool do_shuffle () {
