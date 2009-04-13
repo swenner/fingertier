@@ -26,7 +26,7 @@ public class PlayerGTK : Player {
 	private Gtk.Label info_label;
 	private Gtk.Label track_label;
 	private Gtk.Image play_pause_img;
-	private Gdk.Pixbuf cover;
+	private Gtk.Image cover;
 	private Gtk.Window window;
 
 	construct {
@@ -82,21 +82,9 @@ public class PlayerGTK : Player {
 		track_label = new Gtk.Label ("");
 		track_label.set_justify (Gtk.Justification.CENTER);
 		
-		try {
-			this.cover = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 300, 300);
-		} catch (GLib.Error e) {
-			try {
-				/* fallback image */
-				// TODO: move into playlist
-				this.cover = new Gdk.Pixbuf.from_file_at_size (
-					"/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg", 250, 250);
-			} catch (GLib.Error e) {
-				GLib.warning ("%s\n", e.message);
-			}		
-		}
-		var image = new Gtk.Image.from_pixbuf (cover);
+		this.cover = new Gtk.Image ();
 		
-		vbox.pack_start (image, false, true, 0);
+		vbox.pack_start (cover, false, true, 0);
 		vbox.pack_end (bbox, false, true, 0);
 		vbox.pack_end (track_label, false, true, 0);
 		vbox.pack_end (info_label, false, true, 0);
@@ -119,6 +107,13 @@ public class PlayerGTK : Player {
 		
 		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number, track.pl_len);
 		this.track_label.set_markup (data);
+		
+		try {
+			var pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 300, 300);
+			this.cover.set_from_pixbuf (pixbuf);
+		} catch (GLib.Error e) {
+			GLib.warning ("%s\n", e.message);
+		}
 	}
 	
 	public void draw () {

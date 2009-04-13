@@ -17,4 +17,7 @@ Build:
 Run:
  type 'make test'
 
+Configuration:
+ Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
+ library folder.
 

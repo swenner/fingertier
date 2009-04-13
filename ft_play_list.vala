@@ -30,15 +30,14 @@ public class PlayList : GLib.Object {
 		conf = new Configuration ();
 		build_playlist ();
 		
-		// TODO: generate playlist files if needed. 
-		// read the library folder recursively
+		// TODO: generate playlist files if needed (timestamp).
 		// creates two files: one with sorted paths, one with shuffled paths
 		// (~/.fingertier/playlist-sorted, ~/.fingertier/playlist-shuffled)
 		
 	}
 	
 	public void set_mode (PlayListMode mode) {
-		// TODO: shuffled or sorted
+		conf.mode = mode;
 	}
 	
 	public PlayListMode get_mode () {
@@ -50,7 +49,7 @@ public class PlayList : GLib.Object {
 		return false;
 	}
 	
-	public Track? get_current_track () {
+	public Track? get_current_track () { // TODO: C warning! Vala bug?
 		if (length <= 0)
 			return null;
 		return build_track ();
@@ -87,8 +86,30 @@ public class PlayList : GLib.Object {
 	}
 	
 	private string get_cover_path () {
-		// TODO: make it dynamic and robust
-		string path = conf.library_path + "/cover.jpg";
+		string suffix;
+		string path;
+		uint slash = 0;
+		uint pos = 0;
+		/* remove track name from path */
+		suffix = this.playlist.nth_data (conf.track_number);
+		weak string it = suffix;
+		
+		while (it.len () > 0) { 
+			if (it.get_char () == '/')
+				slash = pos;
+			pos++;
+			it = it.next_char ();
+		}
+		
+		string s = suffix.substring (0, slash);
+		path = conf.library_path + "/" + s + "/cover.jpg";
+		
+		var dir = File.new_for_path (path);
+		if (!dir.query_exists (null)) {
+			/* fallback image */
+			path = "/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg";
+		}
+		
 		return path;
 	}
 	
@@ -96,7 +117,7 @@ public class PlayList : GLib.Object {
 		playlist = new GLib.List<string> ();
 		
 		var dir = File.new_for_path (conf.library_path);
-		// TODO: GLib.FileInfo.get_modification_time
+		// GLib.FileInfo.get_modification_time
 		process_directory (dir, "");
 		
 		// DEBUG
