@@ -95,8 +95,8 @@ public class PlayList : GLib.Object {
 	
 	// TODO: it should check subfolders too!
 	private void build_playlist () {
-		File dir;
-		FileInfo fileInfo;
+		GLib.File dir;
+		GLib.FileInfo fileInfo;
 		
 		playlist = new GLib.List<string> ();
 		
@@ -107,8 +107,9 @@ public class PlayList : GLib.Object {
 
 			while ((fileInfo = enumerator.next_file (null)) != null)
 			{
-				// TODO: check if it could be a music file
-				playlist.append(fileInfo.get_name());
+				string p = fileInfo.get_name ();
+				if (is_music (p))
+					playlist.append (p);
 			}
 			enumerator.close(null);
 
@@ -123,6 +124,16 @@ public class PlayList : GLib.Object {
 		}
 
 		this.length = playlist.length ();
+	}
+	
+	private bool is_music (string path) {
+		if (path.has_suffix ("mp3"))
+			return true;
+		if (path.has_suffix ("ogg"))
+			return true;
+		if (path.has_suffix ("flac"))
+			return true;
+		return false;
 	}
 }
 
