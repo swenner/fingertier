@@ -72,6 +72,7 @@ public class Configuration : GLib.Object {
 		}
 		/* read */
 		string line;
+		uint u;
 		try {
 			var istream = new DataInputStream (file.read (null));
 			while ((line = istream.read_line (null, null)) != null) {
@@ -79,14 +80,18 @@ public class Configuration : GLib.Object {
 					this.library_path = line.substring (13, -1);
 					stdout.printf ("library_path = %s\n", this.library_path);
 				} else if (line.has_prefix ("TRACK_NUMBER=")) {
-					uint t = line.substring (13, -1).to_int ();
-					if (t > 0)
-						this.track_number = t - 1;
+					u = line.substring (13, -1).to_int ();
+					if (u > 0)
+						this.track_number = u - 1;
 					else
 						this.track_number = 0;
 					stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
 				} else if (line.has_prefix ("MODE=")) {
-					this.mode = (PlayListMode) line.substring (5, -1).to_int ();
+					u = line.substring (5, -1).to_int ();
+					if (u < 3)
+						this.mode = (PlayListMode) u;
+					else
+						this.mode = PlayListMode.NULL;
 					stdout.printf ("mode = %u\n", this.mode);
 				} else if (line.has_prefix ("TIMESTAMP=")) {
 					this.playlist_generation_timestamp = line.substring (10, -1).to_int ();
