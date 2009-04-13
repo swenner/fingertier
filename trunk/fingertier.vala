@@ -22,7 +22,7 @@ using Gst;
 namespace Ft {
 	
 public struct Track {
-	public uint number;
+	public uint number;	/* [1, length] */
 	public uint pl_len; /* length of the playlist */
 	public string uri;
 	public string cover_path;
@@ -50,7 +50,7 @@ public class Player : GLib.Object {
 
 	/* destructor */
 	~Player () {
-		unload_pipeline ();
+		this.pipeline.set_state (Gst.State.NULL);
 	}
 
 	private void setup_pipeline () {
@@ -68,10 +68,6 @@ public class Player : GLib.Object {
 		this.pipeline.set_state (Gst.State.PAUSED);
 	}
 
-	private void unload_pipeline () {
-		this.pipeline.set_state (Gst.State.NULL);
-	}
-
 	/* Callback if the end of a track is reached */
 	private void gst_end_of_stream_cb (Gst.Bus bus, Gst.Message message) {
 		GLib.message ("End of stream (eos) reached.");
@@ -83,7 +79,7 @@ public class Player : GLib.Object {
 		TagList tag_list;
 
 		message.parse_tag (out tag_list);
-		tag_list.foreach (this.save_tags); // NOTE: C warning: Bug filed upstream.
+		tag_list.foreach (this.save_tag); // NOTE: C warning: Bug filed upstream.
 		track_data_changed ();
 	}
 
@@ -97,12 +93,11 @@ public class Player : GLib.Object {
 		if (error != null) {
 			msg = error.message;
 		}
-	
 		GLib.critical ("GST playbin error: %s \nDebug: %s\n", msg, debug);
 	}
 
 	/* Fetch the value of certain tags */
-	private void save_tags (Gst.TagList list, string tag) {
+	private void save_tag (Gst.TagList list, string tag) {
 		Gst.Value val;
 
 		if (list.copy_value (out val, list, tag)) {
@@ -135,12 +130,13 @@ public class Player : GLib.Object {
 		Track? t = pl.get_next_track ();
 		if (t == null)
 			return;
+		
+		track = t;
 	
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
-	
-		track = t;
+
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", track.uri);
 		track_data_changed ();
@@ -155,12 +151,13 @@ public class Player : GLib.Object {
 		Track? t = pl.get_previous_track ();
 		if (t == null)
 			return;
-	
+		
+		track = t;
+
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
-	
-		track = t;
+
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", track.uri);
 		track_data_changed ();

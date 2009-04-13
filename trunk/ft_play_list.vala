@@ -23,11 +23,10 @@ namespace Ft {
 public class PlayList : GLib.Object {
 
 	//TODO: private FtConfiguration config;
-	
 	private GLib.List<string> playlist;
 	private string music_path;
-	private uint track_number; /* [0, length-1] */ //{ get; private set; default = 0; } 
-	private uint length; //{ get; private set; default = 0; }
+	private uint track_number; /* [0, length-1] */
+	private uint length;
 
 	construct {
 		music_path = Environment.get_home_dir () + 
@@ -82,7 +81,7 @@ public class PlayList : GLib.Object {
 	/* Private functions */
 	private Track build_track () {
 		Track t = Track () {
-			number = track_number,
+			number = track_number + 1,
 			pl_len = length,
 			uri = "file://" + this.music_path + "/" + 
 				  this.playlist.nth_data (this.track_number),
