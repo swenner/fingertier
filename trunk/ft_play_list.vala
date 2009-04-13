@@ -92,29 +92,12 @@ public class PlayList : GLib.Object {
 		return path;
 	}
 	
-	// TODO: it should check subfolders too!
 	private void build_playlist () {
-		GLib.File dir;
-		GLib.FileInfo fileInfo;
-		
 		playlist = new GLib.List<string> ();
 		
-		dir = File.new_for_path (conf.library_path);
-
-		try {
-			FileEnumerator enumerator = dir.enumerate_children ("*", FileQueryInfoFlags.NONE, null);
-
-			while ((fileInfo = enumerator.next_file (null)) != null)
-			{
-				string p = fileInfo.get_name ();
-				if (is_music (p))
-					playlist.append (p);
-			}
-			enumerator.close(null);
-
-		} catch (GLib.Error e) {
-			GLib.warning ("%s\n", e.message);
-		}
+		var dir = File.new_for_path (conf.library_path);
+		// TODO: GLib.FileInfo.get_modification_time
+		process_directory (dir, "");
 		
 		// DEBUG
 		stdout.printf ("Generated PlayList:\n");
@@ -123,6 +106,31 @@ public class PlayList : GLib.Object {
 		}
 
 		this.length = playlist.length ();
+	}
+	
+	private void process_directory (GLib.File dir, string path) {
+		GLib.FileInfo fileInfo;
+		
+		try {
+			FileEnumerator enumerator = dir.enumerate_children ("*", 
+					FileQueryInfoFlags.NONE, null);
+			
+			while ((fileInfo = enumerator.next_file (null)) != null) {
+				if (fileInfo.get_file_type () == GLib.FileType.DIRECTORY) {
+					string name = fileInfo.get_name ();
+					var child = dir.get_child (name);
+					process_directory (child, path + name + "/");
+				} else {
+					string p = fileInfo.get_name ();
+					if (is_music (p))
+						playlist.append (path + p);
+				}
+			}
+			enumerator.close(null);
+
+		} catch (GLib.Error e) {
+			GLib.warning ("%s\n", e.message);
+		}
 	}
 	
 	private bool is_music (string path) {
