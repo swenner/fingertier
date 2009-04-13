@@ -32,11 +32,8 @@ public class Configuration : GLib.Object {
 		read ();
 	}
 	
-	private bool read_file (GLib.FileOutputStream fstream) {
-		return false;
-	}
-	
 	public bool read () {
+		// TODO: optimise this horrible function
 		var dir = File.new_for_path (Environment.get_home_dir () + 
 										"/.fingertier");
 		if (!dir.query_exists (null)) {
@@ -73,9 +70,23 @@ public class Configuration : GLib.Object {
 		try {
 			var istream = new DataInputStream (file.read (null));
 			while ((line = istream.read_line (null, null)) != null) {
-        		stdout.printf ("%s\n", line);
+				if (line.has_prefix ("LIBRARY_PATH=")) {
+					this.library_path = line.substring (13, -1);
+					stdout.printf ("%s\n", this.library_path);
+				} else if (line.has_prefix ("TRACK_NUMBER=")) {
+					this.track_number = line.substring (13, -1).to_int ();
+					stdout.printf ("%u\n", this.track_number);
+				} else if (line.has_prefix ("MODE=")) {
+					this.mode = (PlayListMode) line.substring (5, -1).to_int ();
+					stdout.printf ("%u\n", this.mode);
+				} else if (line.has_prefix ("TIMESTAMP=")) {
+					this.playlist_generation_timestamp = line.substring (10, -1).to_int ();
+					stdout.printf ("%u\n", this.playlist_generation_timestamp);
+				} else {
+					GLib.message ("This configuration file contains garbage.");
+				}
 			}
-		
+			istream.close (null);
         } catch (IOError e) {
     		GLib.warning ("%s", e.message);
 			return false;
@@ -84,7 +95,7 @@ public class Configuration : GLib.Object {
 	}
 
 	public bool write () {
-		// TODO: save all members to disk (~/.fingertier/fingertier.conf)
+		// TODO: save all members to disk (~/.fingertier/fingertier.conf), which does exist.
 		return false;
 	}
 
