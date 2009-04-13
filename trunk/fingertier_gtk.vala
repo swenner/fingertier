@@ -71,7 +71,7 @@ public class PlayerGTK : Player {
 		next_button.clicked += next;
 
 		var bbox = new Gtk.HButtonBox ();
-		bbox.set_layout (Gtk.ButtonBoxStyle.SPREAD); //CENTER
+		bbox.set_layout (Gtk.ButtonBoxStyle.SPREAD);
 		bbox.add (previous_button);
 		bbox.add (play_button);
 		bbox.add (next_button);
@@ -105,17 +105,17 @@ public class PlayerGTK : Player {
 		string data; 
 		string artist, title, album;
 		
-		if (track.artist.len() > 34)
+		if (track.artist.len() > 37)
 			artist = track.artist.substring (0, 33) + "...";
 		else
 			artist = track.artist;
 		
-		if (track.title.len() > 34)
+		if (track.title.len() > 37)
 			title = track.title.substring (0, 33) + "...";
 		else
 			title = track.title;
 		
-		if (track.album.len() > 34)
+		if (track.album.len() > 37)
 			album = track.album.substring (0, 33) + "...";
 		else
 			album = track.album;
