@@ -80,7 +80,7 @@ public class PlayList : GLib.Object {
 			uri = "file://" + conf.library_path + "/" + 
 				  this.playlist.nth_data (conf.track_number),
 			cover_path = get_cover_path (),
-			info = ""
+			artist = "", title = "", album = ""
 		}; */
 		Track t = new Track (conf.track_number + 1,
 					length, "file://" + conf.library_path + "/" + 
