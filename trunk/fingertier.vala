@@ -30,7 +30,7 @@ public class Track {
 	public string artist;
 	public string title;
 	public string album;
-	
+
 	public Track (uint n, uint l, string u, string cp) {
 		number = n;
 		pl_len = l;

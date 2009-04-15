@@ -10,6 +10,11 @@ TODO:
   * configuration menu
   * library creation progress bar. GUI should never get locked.
 
+Ressources:
+
+DBus: http://git.freesmartphone.org/?p=specs.git;a=blob_plain;f=html/index.html;hb=HEAD
+DBus: http://valadoc.org/?pkg=dbus-glib-1
+Libeflvala: http://git.freesmartphone.org/?p=libeflvala.git;a=summary
 
 GTK layout:
 

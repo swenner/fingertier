@@ -83,8 +83,11 @@ public class PlayerGTK : Player {
 		track_number_label.set_justify (Gtk.Justification.CENTER);
 		
 		this.cover = new Gtk.Image ();
+		var evbox = new Gtk.EventBox ();
+		evbox.button_press_event += show_settings;
+		evbox.add (cover);
 		
-		vbox.pack_start (cover, false, true, 0);
+		vbox.pack_start (evbox, false, true, 0);
 		vbox.pack_end (bbox, false, true, 0);
 		vbox.pack_end (track_number_label, false, true, 0);
 		vbox.pack_end (info_label, false, true, 0);
@@ -104,6 +107,9 @@ public class PlayerGTK : Player {
 	private void update_widgets () {
 		string data; 
 		string artist, title, album;
+		
+		if (track == null)
+			return;
 		
 		if (track.artist.len() > 37)
 			artist = track.artist.substring (0, 33) + "...";
@@ -134,6 +140,13 @@ public class PlayerGTK : Player {
 		} catch (GLib.Error e) {
 			GLib.warning ("%s\n", e.message);
 		}
+	}
+	
+	private bool show_settings () {
+		//this.cover.hide ();
+		
+		GLib.message ("finger weg!");
+		return true;
 	}
 	
 	public void draw () {
