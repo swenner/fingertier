@@ -96,7 +96,7 @@ public class PlayerGTK : Player {
 		this.window.add (vbox);
 		
 		this.window.title = "Fingertier Music Player";
-		this.window.set_default_size (480, 600); /* OM GTA02 screen size: 480x640 */
+		this.window.set_default_size (480, 500); /* OM GTA02 screen size: 480x640 */
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += Gtk.main_quit;
@@ -126,16 +126,24 @@ public class PlayerGTK : Player {
 		else
 			album = track.album;
 		
-		data = "<span size=\"xx-large\">%s\n%s\n%s</span>\n".printf (artist,
+		data = "<span size=\"large\">%s\n%s\n%s</span>\n".printf (artist,
 																	 title,
 																	 album);
 		this.info_label.set_markup (data);
 		
-		data = "<span size=\"xx-large\">%u/%u</span>\n".printf (track.number, track.pl_len);
+		data = "<span size=\"large\">%u/%u</span>\n".printf (track.number, track.pl_len);
 		this.track_number_label.set_markup (data);
 		
 		try {
-			var pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 300, 300);
+			var dir = File.new_for_path (track.cover_path);
+			Gdk.Pixbuf pixbuf;
+			if (!dir.query_exists (null)) {
+				/* fallback image */
+				string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
+				pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
+			} else {
+				pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 150, 150);
+			}
 			this.cover.set_from_pixbuf (pixbuf);
 		} catch (GLib.Error e) {
 			GLib.warning ("%s\n", e.message);

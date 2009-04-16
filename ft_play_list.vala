@@ -108,12 +108,6 @@ public class PlayList : GLib.Object {
 		string s = suffix.substring (0, slash);
 		path = conf.library_path + "/" + s + "/cover.jpg";
 		
-		var dir = File.new_for_path (path);
-		if (!dir.query_exists (null)) {
-			/* fallback image */
-			path = "/usr/share/icons/Tango/scalable/mimetypes/audio-x-generic.svg";
-		}
-		
 		return path;
 	}
 	
