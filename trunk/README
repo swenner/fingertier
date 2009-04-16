@@ -7,9 +7,11 @@ player for mobile devices. It is optimised for smart phones with small touch
 screens, like the OpenMoko Freerunner.
 
 Dependencies:
- * Vala
+ * Vala > 0.7.0
+ * GLib-2.0
  * GTK+2.0
- * Gstreamer
+ * GIO-2.0
+ * Gstreamer-0.10
 
 Build: 
  type 'make'
