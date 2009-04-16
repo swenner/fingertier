@@ -10,7 +10,7 @@ TODO:
   * configuration menu
   * library creation progress bar. GUI should never get locked.
   * ship a default image (png 150x150)
-  * Is the GIO dependency really necessary?
+  * Is the GIO dependency really neccessary?
 
 Ressources:
 
