@@ -57,7 +57,6 @@ public class Player : GLib.Object {
 		pl = new PlayList ();
 		track = pl.get_current_track ();
 		setup_pipeline ();
-		track_data_changed ();
 	}
 
 	/* destructor */

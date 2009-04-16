@@ -34,6 +34,7 @@ public class PlayerGTK : Player {
 		create_widgets ();
 		/* register signal handler */
 		this.track_data_changed += update_widgets;
+		track_data_changed ();
 	}
 	
 	private void create_widgets () {
@@ -111,8 +112,6 @@ public class PlayerGTK : Player {
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += Gtk.main_quit;
-		
-		track_data_changed ();
 	}
 	
 	private void update_widgets () {
