@@ -28,6 +28,7 @@ public class PlayerGTK : Player {
 	private Gtk.Image play_pause_img;
 	private Gtk.Image cover;
 	private Gtk.Window window;
+	private string last_cover_path; /* optimisation to avoid unneccessary cover reloads */
 
 	construct {
 		create_widgets ();
@@ -144,19 +145,23 @@ public class PlayerGTK : Player {
 		data = "<span size=\"large\">%u/%u</span>\n".printf (track.number, track.pl_len);
 		this.track_number_label.set_markup (data);
 		
-		try {
-			var dir = File.new_for_path (track.cover_path);
-			Gdk.Pixbuf pixbuf;
-			if (!dir.query_exists (null)) {
-				/* fallback image */
-				string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
-				pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
-			} else {
-				pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 150, 150);
+		if (this.last_cover_path != track.cover_path) {
+			try {
+				var dir = File.new_for_path (track.cover_path);
+				Gdk.Pixbuf pixbuf;
+				if (!dir.query_exists (null)) {
+					/* fallback image */
+					string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
+					pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
+					this.last_cover_path = "";
+				} else {
+					pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 150, 150);
+					this.last_cover_path = track.cover_path;
+				}
+				this.cover.set_from_pixbuf (pixbuf);
+			} catch (GLib.Error e) {
+				GLib.warning ("%s\n", e.message);
 			}
-			this.cover.set_from_pixbuf (pixbuf);
-		} catch (GLib.Error e) {
-			GLib.warning ("%s\n", e.message);
 		}
 	}
 	

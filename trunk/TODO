@@ -4,11 +4,13 @@ TODO:
   * save playlist as efficient file (just the paths?)
   * implement saving of the configuration
   * add volume control
-  * should pause on call
-  * should prevent the phone from sleeping while playing
-  * 'Aux' button should play next song if phone is locked
+  * player should pause on call
+  * player should prevent the phone from sleeping while playing
+  * 'Aux' button should play next song if phone is locked (dbus)
   * configuration menu
   * library creation progress bar. GUI should never get locked.
+  * ship a default image (png 150x150)
+  * Is the GIO dependency really necessary?
 
 Ressources:
 
