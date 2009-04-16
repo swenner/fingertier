@@ -57,6 +57,7 @@ public class Player : GLib.Object {
 		pl = new PlayList ();
 		track = pl.get_current_track ();
 		setup_pipeline ();
+		track_data_changed ();
 	}
 
 	/* destructor */
@@ -74,9 +75,8 @@ public class Player : GLib.Object {
 		bus.message["error"] += this.gst_error_cb;
 		
 		if (track != null) {
-			/* hack to read the tags of the first track */
+			/* load the first track */
 			this.pipeline.set ("uri", track.uri);
-			this.pipeline.set_state (Gst.State.PLAYING);
 			this.pipeline.set_state (Gst.State.PAUSED);
 		}
 	}
