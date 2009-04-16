@@ -107,7 +107,7 @@ public class PlayerGTK : Player {
 		this.window.add (vbox);
 		
 		this.window.title = "Fingertier Music Player";
-		this.window.set_default_size (480, 500); /* OM GTA02 screen size: 480x640 */
+		this.window.set_default_size (480, 512); /* OM GTA02 screen size: 480x640 */
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
 		this.window.destroy += Gtk.main_quit;
@@ -155,7 +155,7 @@ public class PlayerGTK : Player {
 					pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
 					this.last_cover_path = "";
 				} else {
-					pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 150, 150);
+					pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 256, 256);
 					this.last_cover_path = track.cover_path;
 				}
 				this.cover.set_from_pixbuf (pixbuf);
