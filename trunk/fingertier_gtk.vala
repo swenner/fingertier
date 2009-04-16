@@ -51,16 +51,17 @@ public class PlayerGTK : Player {
 		play_button.set_image (play_pause_img);
 		play_button.set_size_request (100, 100);
 		play_button.clicked += (s) => {
-			string stock_id;
-			// NOTE: C warning: Patch submitted upstream.
-			this.play_pause_img.get_stock (out stock_id, null);
-			if (stock_id == STOCK_MEDIA_PLAY)
-				this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE,
-													Gtk.IconSize.DIALOG);
-			else
-				this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY,
-													Gtk.IconSize.DIALOG);
-			play_pause ();
+			if (play_pause ()) {
+				string stock_id;
+				// NOTE: C warning: Patch submitted upstream.
+				this.play_pause_img.get_stock (out stock_id, null);
+				if (stock_id == STOCK_MEDIA_PLAY)
+					this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE,
+														Gtk.IconSize.DIALOG);
+				else
+					this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY,
+														Gtk.IconSize.DIALOG);
+			}
 		};
 
 		var next_button = new Gtk.Button ();
@@ -76,13 +77,22 @@ public class PlayerGTK : Player {
 		bbox.add (play_button);
 		bbox.add (next_button);
 		
-		info_label = new Gtk.Label ("");
+		info_label = new Gtk.Label (null);
+		info_label.set_markup ("<span size=\"large\">Your playlist\nis empty.</span>\n");
 		info_label.set_justify (Gtk.Justification.CENTER);
 
 		track_number_label = new Gtk.Label ("");
 		track_number_label.set_justify (Gtk.Justification.CENTER);
 		
 		this.cover = new Gtk.Image ();
+		string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
+		try {
+			var pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
+			this.cover.set_from_pixbuf (pixbuf);
+		} catch (GLib.Error e) {
+			GLib.warning ("%s: %s\n", e.message, path);
+		}
+		
 		var evbox = new Gtk.EventBox ();
 		evbox.button_press_event += show_settings;
 		evbox.add (cover);
