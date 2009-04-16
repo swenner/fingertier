@@ -30,6 +30,9 @@ public class PlayList : GLib.Object {
 		conf = new Configuration ();
 		build_playlist ();
 		
+		if (conf.track_number >= length)
+			conf.track_number = 0;
+		
 		// TODO: generate playlist files if needed (timestamp).
 		// creates two files: one with sorted paths, one with shuffled paths
 		// (~/.fingertier/playlist-sorted, ~/.fingertier/playlist-shuffled)
@@ -49,14 +52,14 @@ public class PlayList : GLib.Object {
 		return false;
 	}
 	
-	public Track? get_current_track () { // TODO: C warning! Vala struct bug?
+	public Track? get_current_track () { // TODO: C warning! Known bug upstream
 		if (length <= 0)
 			return null;
 		return build_track ();
 	}
 	
-	public Track? get_next_track () { // TODO: C warning! Vala struct bug?
-		if (conf.track_number >= length - 1) {
+	public Track? get_next_track () { // TODO: C warning! Known bug upstream
+		if (conf.track_number + 1 >= length) {
 			return null;
 		}
 		
@@ -64,7 +67,7 @@ public class PlayList : GLib.Object {
 		return build_track ();
 	}
 	 
-	public Track? get_previous_track () { // TODO: C warning! Vala struct bug?
+	public Track? get_previous_track () { // TODO: C warning! Known bug upstream
 		if (conf.track_number <= 0)
 			return null;
 		

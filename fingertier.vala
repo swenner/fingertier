@@ -72,11 +72,13 @@ public class Player : GLib.Object {
 		bus.message["tag"] += this.gst_tag_cb;
 		bus.message["eos"] += this.gst_end_of_stream_cb;
 		bus.message["error"] += this.gst_error_cb;
-	
-		/* hack to read the tags of the first track */
-		this.pipeline.set ("uri", track.uri);
-		this.pipeline.set_state (Gst.State.PLAYING);
-		this.pipeline.set_state (Gst.State.PAUSED);
+		
+		if (track != null) {
+			/* hack to read the tags of the first track */
+			this.pipeline.set ("uri", track.uri);
+			this.pipeline.set_state (Gst.State.PLAYING);
+			this.pipeline.set_state (Gst.State.PAUSED);
+		}
 	}
 
 	/* Callback if the end of a track is reached */
@@ -132,7 +134,10 @@ public class Player : GLib.Object {
 	protected signal void track_data_changed ();
 
 	/* Public functions */
-	public void play_pause () {
+	public bool play_pause () {
+		if (track == null)
+			return false;
+		
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out state, null, time);
@@ -144,6 +149,7 @@ public class Player : GLib.Object {
 			this.pipeline.set ("uri", track.uri);
 			this.pipeline.set_state (Gst.State.PLAYING);
 		}
+		return true;
 	}
 
 	public void next () {
