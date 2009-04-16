@@ -123,23 +123,26 @@ public class PlayerGTK : Player {
 			return;
 		
 		if (track.artist.len() > 37)
-			artist = track.artist.substring (0, 33) + "...";
+			artist = GLib.Markup.escape_text (track.artist.substring (0, 33), -1)
+					+ "...";
 		else
-			artist = track.artist;
+			artist = GLib.Markup.escape_text (track.artist, -1);
 		
 		if (track.title.len() > 37)
-			title = track.title.substring (0, 33) + "...";
+			title = GLib.Markup.escape_text (track.title.substring (0, 33), -1)
+					+ "...";
 		else
-			title = track.title;
+			title = GLib.Markup.escape_text (track.title, -1);
 		
 		if (track.album.len() > 37)
-			album = track.album.substring (0, 33) + "...";
+			album = GLib.Markup.escape_text (track.album.substring (0, 33), -1)
+					+ "...";
 		else
-			album = track.album;
+			album = GLib.Markup.escape_text (track.album, -1);
 		
 		data = "<span size=\"large\">%s\n%s\n%s</span>\n".printf (artist,
-																	 title,
-																	 album);
+																  title,
+																  album);
 		this.info_label.set_markup (data);
 		
 		data = "<span size=\"large\">%u/%u</span>\n".printf (track.number, track.pl_len);
