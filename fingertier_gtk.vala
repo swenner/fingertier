@@ -55,16 +55,12 @@ public class PlayerGTK : Player {
 		play_button.set_image (play_pause_img);
 		play_button.set_size_request (100, 100);
 		play_button.clicked += (s) => {
-			if (play_pause ()) {
-				string stock_id;
-				// NOTE: C warning: Patch submitted upstream.
-				this.play_pause_img.get_stock (out stock_id, null);
-				if (stock_id == STOCK_MEDIA_PLAY)
-					this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE,
-														Gtk.IconSize.DIALOG);
-				else
-					this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY,
-														Gtk.IconSize.DIALOG);
+			if (play_pause () == PlayerState.PLAYING) {
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PAUSE,
+													Gtk.IconSize.DIALOG);
+			} else {
+				this.play_pause_img.set_from_stock (STOCK_MEDIA_PLAY,
+													Gtk.IconSize.DIALOG);
 			}
 		};
 
