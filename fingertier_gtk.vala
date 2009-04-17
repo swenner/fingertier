@@ -33,8 +33,10 @@ public class PlayerGTK : Player {
 	construct {
 		create_widgets ();
 		/* register signal handler */
-		this.track_data_changed += update_widgets;
-		track_data_changed ();
+		this.track_tags_changed += update_tag_widgets;
+		this.track_cover_path_changed += update_cover_image;
+		track_tags_changed ();
+		track_cover_path_changed ();
 	}
 	
 	private void create_widgets () {
@@ -114,7 +116,7 @@ public class PlayerGTK : Player {
 		this.window.destroy += Gtk.main_quit;
 	}
 	
-	private void update_widgets () {
+	private void update_tag_widgets () {
 		string data; 
 		string artist, title, album;
 		
@@ -146,6 +148,11 @@ public class PlayerGTK : Player {
 		
 		data = "<span size=\"large\">%u/%u</span>\n".printf (track.number, track.pl_len);
 		this.track_number_label.set_markup (data);
+	}
+		
+	private void update_cover_image () {
+		if (track == null)
+			return;
 		
 		if (this.last_cover_path != track.cover_path) {
 			try {

@@ -160,8 +160,8 @@ public class PlayList : GLib.Object {
 			return true;
 		if (path.has_suffix ("ogg"))
 			return true;
-		if (path.has_suffix ("flac"))
-			return true;
+		//if (path.has_suffix ("flac"))
+		//	return true;
 		return false;
 	}
 }

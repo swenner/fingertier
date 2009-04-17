@@ -33,7 +33,7 @@ Configuration:
  Files called 'cover.jpg' are displayed by the player.
 
 -----------------
-Packaging opkg
+Packaging opkg:
 -----------------
 You need a working OpenMoko toolchain.
 Help: http://wiki.openmoko.org/wiki/Toolchain
@@ -45,9 +45,10 @@ on the moko: opkg install gstreamer-0.10 gio-2.0 gtk+-2.0 glib-2.0-dev
 Extract fingertier into a folder 'fingertier'.
 Run: om-make-ipkg fingertier
 
-Copy the package on your Moko and install it:
+Copy the package on your Moko, install and run it:
 scp fingertier_0.1_armv4t.ipk root@192.168.0.202:
 ssh root@192.168.0.202 opkg install fingertier_0.1_armv4t.ipk
+ssh root@192.168.0.202 DISPLAY=:0.0 fingertier
 
 
 
