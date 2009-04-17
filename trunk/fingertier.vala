@@ -92,7 +92,7 @@ public class Player : GLib.Object {
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tag); // NOTE: C warning: Bug filed upstream.
-		track_data_changed ();
+		track_tags_changed ();
 	}
 
 	/* Callback for errors in playbin */
@@ -130,7 +130,8 @@ public class Player : GLib.Object {
 	}
 
 	/* Protected functions and signals */
-	protected signal void track_data_changed ();
+	protected signal void track_tags_changed ();
+	protected signal void track_cover_path_changed ();
 
 	/* Public functions */
 	public bool play_pause () {
@@ -164,7 +165,8 @@ public class Player : GLib.Object {
 
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", track.uri);
-		track_data_changed ();
+		track_tags_changed ();
+		track_cover_path_changed ();
 	
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
@@ -185,7 +187,8 @@ public class Player : GLib.Object {
 
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", track.uri);
-		track_data_changed ();
+		track_tags_changed ();
+		track_cover_path_changed ();
 
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
