@@ -46,6 +46,12 @@ public enum PlayListMode {
 	SHUFFLED
 }
 
+public enum PlayerState {
+	NULL = 0,
+	PAUSED,
+	PLAYING
+}
+
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
@@ -134,9 +140,9 @@ public class Player : GLib.Object {
 	protected signal void track_cover_path_changed ();
 
 	/* Public functions */
-	public bool play_pause () {
+	public PlayerState play_pause () {
 		if (track == null)
-			return false;
+			return PlayerState.NULL;
 		
 		Gst.State state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
@@ -145,11 +151,11 @@ public class Player : GLib.Object {
 		// TODO: smooth transitions
 		if (state == State.PLAYING) {
 			this.pipeline.set_state (Gst.State.PAUSED);
-		} else {
-			this.pipeline.set ("uri", track.uri);
-			this.pipeline.set_state (Gst.State.PLAYING);
+			return PlayerState.PAUSED;
 		}
-		return true;
+		this.pipeline.set ("uri", track.uri);
+		this.pipeline.set_state (Gst.State.PLAYING);
+		return PlayerState.PLAYING;
 	}
 
 	public void next () {
