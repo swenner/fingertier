@@ -16,14 +16,11 @@ Dependencies:
  * Gstreamer-0.10
 
 -----------------
-Build:
+Install:
 -----------------
- type 'make'
-
------------------
-Run:
------------------
- type 'make test'
+ ./configure
+ make
+ sudo make install
 
 -----------------
 Configuration:
