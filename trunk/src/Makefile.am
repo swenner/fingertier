@@ -1,8 +1,11 @@
-INCLUDES = -I$(top_srcdir)
+
+INCLUDES = \
+	$(FINGERTIER_CFLAGS) \
+	$(NULL)
 
 BUILT_SOURCES = fingertier.vala.stamp
 
-AM_CFLAGS = -Wall -pedantic -std=c99 @DEPENDENCIES_CFLAGS@
+AM_CFLAGS = -Wall -pedantic -std=c99
 
 bin_PROGRAMS = fingertier
 
@@ -27,5 +30,7 @@ fingertier_LDADD = \
 	$(NULL)
 
 
-MAINTAINERCLEANFILES  = config.h.in Makefile.in
+MAINTAINERCLEANFILES  = \
+	config.h.in
+	Makefile.in
 
