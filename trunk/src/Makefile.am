@@ -16,9 +16,8 @@ fingertier_VALASOURCES = \
 	ft_play_list.vala \
 	$(NULL)
 
-fingertier_SOURCES = \
+nodist_fingertier_SOURCES = \
 	$(fingertier_VALASOURCES:.vala=.c) \
-	$(fingertier_VALASOURCES:.vala=.h) \
 	$(NULL)
 
 fingertier.vala.stamp: $(fingertier_VALASOURCES)
@@ -29,8 +28,13 @@ fingertier_LDADD = \
 	$(FINGERTIER_LIBS) \
 	$(NULL)
 
-DISTCLEANFILES = \
-	*.h *.c
+EXTRA_DIST = \
+	$(fingertier_VALASOURCES) \
+	$(NULL)
+
+CLEANFILES = \
+	fingertier.vala.stamp \
+	*.c
 
 MAINTAINERCLEANFILES  = \
 	Makefile.in \
