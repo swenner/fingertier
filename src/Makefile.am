@@ -29,8 +29,11 @@ fingertier_LDADD = \
 	$(FINGERTIER_LIBS) \
 	$(NULL)
 
+DISTCLEANFILES = \
+	*.h *.c
 
 MAINTAINERCLEANFILES  = \
+	Makefile.in \
 	config.h.in
-	Makefile.in
+
 

@@ -1,8 +1,8 @@
 AC_PREREQ(2.53)
-AC_INIT(fingertier, 0.0.1, http://code.google.com/p/fingertier)
+AC_INIT([fingertier], [0.0.1], [http://code.google.com/p/fingertier])
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR(src/fingertier.vala)
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER(src/config.h)
 AM_MAINTAINER_MODE
 
 AC_ISC_POSIX
