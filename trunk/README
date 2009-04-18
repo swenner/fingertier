@@ -9,7 +9,7 @@ screens, like the OpenMoko Freerunner.
 -----------------
 Dependencies:
 -----------------
- * Vala > 0.7.0
+ * Vala >= 0.7.0
  * GLib-2.0
  * GTK+2.0
  * GIO-2.0
@@ -32,15 +32,15 @@ Configuration:
  library folder.
  Files called 'cover.jpg' are displayed by the player.
 
------------------
-Packaging opkg:
------------------
+-------------------
+Packaging (opkg):
+-------------------
 You need a working OpenMoko toolchain.
-Help: http://wiki.openmoko.org/wiki/Toolchain
+HowTo: http://wiki.openmoko.org/wiki/Toolchain
 
 Install the dependencies:
 toolchain: opkg-target install gstreamer-0.10-dev gio-2.0-dev gtk+-2.0-dev glib-2.0-dev
-on the moko: opkg install gstreamer-0.10 gio-2.0 gtk+-2.0 glib-2.0-dev
+on the Moko: opkg install libgio-2.0-0 gtk+ libglib-2.0-0 gstreamer gst-plugin-mad
 
 Extract fingertier into a folder 'fingertier'.
 Run: om-make-ipkg fingertier
