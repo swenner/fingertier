@@ -18,6 +18,7 @@
 
 using GLib;
 using Gtk;
+using Config;
 
 namespace Ft {
 
@@ -85,9 +86,9 @@ public class PlayerGTK : Player {
 		track_number_label.set_justify (Gtk.Justification.CENTER);
 		
 		this.cover = new Gtk.Image ();
-		string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
+		string path = Config.PACKAGE_DATADIR + "/pixmaps/fingertier-256.png";
 		try {
-			var pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
+			var pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 256, 256);
 			this.cover.set_from_pixbuf (pixbuf);
 		} catch (GLib.Error e) {
 			GLib.warning ("%s: %s\n", e.message, path);
@@ -156,8 +157,8 @@ public class PlayerGTK : Player {
 				Gdk.Pixbuf pixbuf;
 				if (!dir.query_exists (null)) {
 					/* fallback image */
-					string path = "/usr/share/icons/Tango/22x22/mimetypes/audio-x-generic.png";
-					pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 22, 22);
+					string path = Config.PACKAGE_DATADIR + "/pixmaps/fingertier-256.png";
+					pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 256, 256);
 					this.last_cover_path = "";
 				} else {
 					pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 256, 256);

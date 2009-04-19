@@ -5,7 +5,7 @@ INCLUDES = \
 
 BUILT_SOURCES = fingertier.vala.stamp
 
-AM_CFLAGS = -Wall -pedantic -std=c99
+AM_CFLAGS = -Wall -pedantic -std=c99 -DPACKAGE_DATADIR=\""$(datadir)"\"
 
 bin_PROGRAMS = fingertier
 
@@ -14,6 +14,7 @@ fingertier_VALASOURCES = \
 	fingertier_gtk.vala \
 	ft_configuration.vala \
 	ft_play_list.vala \
+	config.vapi \
 	$(NULL)
 
 nodist_fingertier_SOURCES = \
@@ -21,7 +22,7 @@ nodist_fingertier_SOURCES = \
 	$(NULL)
 
 fingertier.vala.stamp: $(fingertier_VALASOURCES)
-	$(VALAC) -c --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg gio-2.0 --save-temps --basedir $(top_srcdir) $^
+	$(VALAC) -C --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg gio-2.0 --save-temps --basedir $(top_srcdir) $^
 	touch $@
 
 fingertier_LDADD = \
@@ -37,7 +38,6 @@ CLEANFILES = \
 	*.c
 
 MAINTAINERCLEANFILES  = \
-	Makefile.in \
-	config.h.in
+	Makefile.in
 
 
