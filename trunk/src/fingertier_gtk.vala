@@ -22,6 +22,10 @@ using Config;
 
 namespace Ft {
 
+public const string default_cover_path = Config.PACKAGE_DATADIR 
+		+ "/pixmaps/fingertier-256.png";
+
+
 public class PlayerGTK : Player {
 	
 	private Gtk.Label info_label;
@@ -86,12 +90,11 @@ public class PlayerGTK : Player {
 		track_number_label.set_justify (Gtk.Justification.CENTER);
 		
 		this.cover = new Gtk.Image ();
-		string path = Config.PACKAGE_DATADIR + "/pixmaps/fingertier-256.png";
 		try {
-			var pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 256, 256);
+			var pixbuf = new Gdk.Pixbuf.from_file_at_size (default_cover_path, 256, 256);
 			this.cover.set_from_pixbuf (pixbuf);
 		} catch (GLib.Error e) {
-			GLib.warning ("%s: %s\n", e.message, path);
+			GLib.warning ("%s: %s\n", e.message, default_cover_path);
 		}
 		
 		var evbox = new Gtk.EventBox ();
@@ -157,8 +160,7 @@ public class PlayerGTK : Player {
 				Gdk.Pixbuf pixbuf;
 				if (!dir.query_exists (null)) {
 					/* fallback image */
-					string path = Config.PACKAGE_DATADIR + "/pixmaps/fingertier-256.png";
-					pixbuf = new Gdk.Pixbuf.from_file_at_size (path, 256, 256);
+					pixbuf = new Gdk.Pixbuf.from_file_at_size (default_cover_path, 256, 256);
 					this.last_cover_path = "";
 				} else {
 					pixbuf = new Gdk.Pixbuf.from_file_at_size (track.cover_path, 256, 256);
