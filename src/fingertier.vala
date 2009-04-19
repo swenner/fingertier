@@ -21,7 +21,7 @@ using Gst;
 
 namespace Ft {
 	
-/* public struct Track { */ // TODO: should be a struct, but they are broken in Vala.
+/* public struct Track { */ // TODO: should be a struct, but they are broken in Vala 0.7.0.
 public class Track {
 	public uint number;	/* [1, length] */
 	public uint pl_len; /* length of the playlist */
@@ -55,7 +55,7 @@ public enum PlayerState {
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
-	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: is Gst.PlayBin2 */
+	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
 	private PlayList pl;			/* handles the state and the data of the player */
 	public Track? track { get; private set; }
 
@@ -138,6 +138,7 @@ public class Player : GLib.Object {
 	/* Protected functions and signals */
 	protected signal void track_tags_changed ();
 	protected signal void track_cover_path_changed ();
+	protected signal void volume_changed (double volume);
 
 	/* Public functions */
 	public PlayerState play_pause () {
@@ -203,8 +204,8 @@ public class Player : GLib.Object {
 	}
 	
 	public void increase_volume () {
+		/* volume [0,1] */
 		double vol;
-		/* TODO: volume [0,10]? [0.1]? */
 		GLib.Value val = GLib.Value (typeof(double));
 		pipeline.get_property ("volume", ref val);
 		vol = val.get_double ();
@@ -213,13 +214,14 @@ public class Player : GLib.Object {
 			vol += 0.1;
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
+			volume_changed (vol);
 		}
 		message ("Volume: %f", vol);
 	}
 	
 	public void decrease_volume () {
+		/* volume [0,1] */
 		double vol;
-		/* TODO: volume [0,10]? [0.1]? */
 		GLib.Value val = GLib.Value (typeof(double));
 		pipeline.get_property ("volume", ref val);
 		vol = val.get_double ();
@@ -228,12 +230,22 @@ public class Player : GLib.Object {
 			vol -= 0.1;
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
+			volume_changed (vol);
 		} else if (vol <= 0.1) {
 			vol = 0.0;
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
+			volume_changed (vol);
 		}
 		message ("Volume: %f", vol);
+	}
+	
+	public double get_volume () {
+		double vol;
+		GLib.Value val = GLib.Value (typeof(double));
+		pipeline.get_property ("volume", ref val);
+		vol = val.get_double ();
+		return vol;
 	}
 }
 
