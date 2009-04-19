@@ -34,6 +34,7 @@ public class PlayerGTK : Player {
 	private Gtk.Image play_pause_img;
 	private Gtk.HButtonBox volume_control;
 	private Gtk.HButtonBox other_buttons;
+	private Gtk.Label volume_label;
 	private Gtk.Window window;
 	private string last_cover_path; /* optimisation to avoid unneccessary cover reloads */
 
@@ -42,6 +43,7 @@ public class PlayerGTK : Player {
 		/* register signal handler */
 		this.track_tags_changed += update_tag_widgets;
 		this.track_cover_path_changed += update_cover_image;
+		this.volume_changed += update_volume_label;
 		track_tags_changed ();
 		track_cover_path_changed ();
 	}
@@ -118,9 +120,14 @@ public class PlayerGTK : Player {
 		voldown_button.set_size_request (100, 100);
 		voldown_button.clicked += decrease_volume;
 		
+		volume_label = new Gtk.Label (null);
+		volume_label.set_markup ("<span size=\"x-large\">%i %%</span>".printf
+								((int) Math.round (get_volume () * 100)));
+		
 		volume_control = new Gtk.HButtonBox ();
 		volume_control.set_layout (Gtk.ButtonBoxStyle.SPREAD);
 		volume_control.add (voldown_button);
+		volume_control.add (volume_label);
 		volume_control.add (volup_button);
 		volume_control.set_no_show_all (true);
 		
@@ -211,6 +218,11 @@ public class PlayerGTK : Player {
 		}
 	}
 	
+	private void update_volume_label (double volume) {
+		this.volume_label.set_markup ("<span size=\"x-large\">%i %%</span>".printf
+									 ((int)(Math.round (volume * 100))));
+	}
+	
 	private bool show_settings () {
 		this.cover.set_no_show_all (true);
 		this.cover.hide ();
@@ -219,7 +231,6 @@ public class PlayerGTK : Player {
 		this.other_buttons.set_no_show_all (false);
 		this.other_buttons.show_all ();
 		
-		GLib.message ("show_settings");
 		return true;
 	}
 	
@@ -230,8 +241,6 @@ public class PlayerGTK : Player {
 		this.other_buttons.set_no_show_all (true);
 		this.cover.set_no_show_all (false);
 		this.cover.show ();
-		
-		GLib.message ("hide_settings");
 	}
 	
 	public void draw () {
