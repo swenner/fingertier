@@ -202,7 +202,7 @@ public class Player : GLib.Object {
 			this.pipeline.set_state (Gst.State.PAUSED);
 	}
 	
-	public double increase_volume () {
+	public void increase_volume () {
 		double vol;
 		/* TODO: volume [0,10]? [0.1]? */
 		GLib.Value val = GLib.Value (typeof(double));
@@ -214,11 +214,10 @@ public class Player : GLib.Object {
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
 		}
-		message ("%f\n", vol);
-		return vol;
+		message ("Volume: %f\n", vol);
 	}
 	
-	public double decrease_volume () {
+	public void decrease_volume () {
 		double vol;
 		/* TODO: volume [0,10]? [0.1]? */
 		GLib.Value val = GLib.Value (typeof(double));
@@ -234,8 +233,7 @@ public class Player : GLib.Object {
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
 		}
-		message ("%f\n", vol);
-		return vol;
+		message ("Volume: %f\n", vol);
 	}
 }
 
