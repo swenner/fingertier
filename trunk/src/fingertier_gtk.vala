@@ -103,7 +103,7 @@ public class PlayerGTK : Player {
 		evbox.button_press_event += show_settings;
 		evbox.add (cover);
 		
-		/* settings widgets */
+		/* hidden settings widgets */
 		var volup_button = new Gtk.Button ();
 		var volup_img = new Gtk.Image.from_stock (STOCK_ADD,
 												  Gtk.IconSize.DIALOG);
@@ -135,7 +135,7 @@ public class PlayerGTK : Player {
 		other_buttons.set_layout (Gtk.ButtonBoxStyle.SPREAD);
 		other_buttons.add (back_button);
 		other_buttons.set_no_show_all (true);
-		/* settings widgets end */
+		/* hidden settings widgets end */
 		
 		vbox.pack_start (other_buttons, false, true, 10);
 		vbox.pack_start (volume_control, false, true, 0);
