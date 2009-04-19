@@ -55,7 +55,7 @@ public enum PlayerState {
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
-	private Gst.Element pipeline;   /* a Gstreamer playbin */
+	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: is Gst.PlayBin2 */
 	private PlayList pl;			/* handles the state and the data of the player */
 	public Track? track { get; private set; }
 
@@ -200,6 +200,42 @@ public class Player : GLib.Object {
 			this.pipeline.set_state (Gst.State.PLAYING);
 		else
 			this.pipeline.set_state (Gst.State.PAUSED);
+	}
+	
+	public double increase_volume () {
+		double vol;
+		/* TODO: volume [0,10]? [0.1]? */
+		GLib.Value val = GLib.Value (typeof(double));
+		pipeline.get_property ("volume", ref val);
+		vol = val.get_double ();
+		
+		if (vol < 1.0) {
+			vol += 0.1;
+			val.set_double (vol);
+			pipeline.set_property ("volume", val);
+		}
+		message ("%f\n", vol);
+		return vol;
+	}
+	
+	public double decrease_volume () {
+		double vol;
+		/* TODO: volume [0,10]? [0.1]? */
+		GLib.Value val = GLib.Value (typeof(double));
+		pipeline.get_property ("volume", ref val);
+		vol = val.get_double ();
+		
+		if (vol > 0.1) {
+			vol -= 0.1;
+			val.set_double (vol);
+			pipeline.set_property ("volume", val);
+		} else if (vol <= 0.1) {
+			vol = 0.0;
+			val.set_double (vol);
+			pipeline.set_property ("volume", val);
+		}
+		message ("%f\n", vol);
+		return vol;
 	}
 }
 
