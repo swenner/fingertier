@@ -214,7 +214,7 @@ public class Player : GLib.Object {
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
 		}
-		message ("Volume: %f\n", vol);
+		message ("Volume: %f", vol);
 	}
 	
 	public void decrease_volume () {
@@ -233,7 +233,7 @@ public class Player : GLib.Object {
 			val.set_double (vol);
 			pipeline.set_property ("volume", val);
 		}
-		message ("Volume: %f\n", vol);
+		message ("Volume: %f", vol);
 	}
 }
 
