@@ -28,10 +28,12 @@ public const string default_cover_path = Config.PACKAGE_DATADIR
 
 public class PlayerGTK : Player {
 	
+	private Gtk.Image cover;
 	private Gtk.Label info_label;
 	private Gtk.Label track_number_label;
 	private Gtk.Image play_pause_img;
-	private Gtk.Image cover;
+	private Gtk.HButtonBox volume_control;
+	private Gtk.HButtonBox other_buttons;
 	private Gtk.Window window;
 	private string last_cover_path; /* optimisation to avoid unneccessary cover reloads */
 
@@ -101,6 +103,42 @@ public class PlayerGTK : Player {
 		evbox.button_press_event += show_settings;
 		evbox.add (cover);
 		
+		/* settings widgets */
+		var volup_button = new Gtk.Button ();
+		var volup_img = new Gtk.Image.from_stock (STOCK_ADD,
+												  Gtk.IconSize.DIALOG);
+		volup_button.set_image (volup_img);
+		volup_button.set_size_request (100, 100);
+		volup_button.clicked += increase_volume;
+		
+		var voldown_button = new Gtk.Button ();
+		var voldown_img = new Gtk.Image.from_stock (STOCK_REMOVE,
+													Gtk.IconSize.DIALOG);
+		voldown_button.set_image (voldown_img);
+		voldown_button.set_size_request (100, 100);
+		voldown_button.clicked += decrease_volume;
+		
+		volume_control = new Gtk.HButtonBox ();
+		volume_control.set_layout (Gtk.ButtonBoxStyle.SPREAD);
+		volume_control.add (voldown_button);
+		volume_control.add (volup_button);
+		volume_control.set_no_show_all (true);
+		
+		var back_button = new Gtk.Button ();
+		var back_img = new Gtk.Image.from_stock (STOCK_CANCEL,
+												 Gtk.IconSize.DIALOG);
+		back_button.set_image (back_img);
+		back_button.set_size_request (80, 80);
+		back_button.clicked += hide_settings;
+		
+		other_buttons = new Gtk.HButtonBox ();
+		other_buttons.set_layout (Gtk.ButtonBoxStyle.SPREAD);
+		other_buttons.add (back_button);
+		other_buttons.set_no_show_all (true);
+		/* settings widgets end */
+		
+		vbox.pack_start (other_buttons, false, true, 10);
+		vbox.pack_start (volume_control, false, true, 0);
 		vbox.pack_start (evbox, false, true, 0);
 		vbox.pack_end (bbox, false, true, 0);
 		vbox.pack_end (track_number_label, false, true, 0);
@@ -174,11 +212,26 @@ public class PlayerGTK : Player {
 	}
 	
 	private bool show_settings () {
-		//this.cover.hide ();
+		this.cover.set_no_show_all (true);
+		this.cover.hide ();
+		this.volume_control.set_no_show_all (false);
+		this.volume_control.show_all ();
+		this.other_buttons.set_no_show_all (false);
+		this.other_buttons.show_all ();
 		
-		GLib.message ("finger weg!");
-		decrease_volume ();
+		GLib.message ("show_settings");
 		return true;
+	}
+	
+	private void hide_settings () {
+		this.volume_control.hide_all ();
+		this.volume_control.set_no_show_all (true);
+		this.other_buttons.hide_all ();
+		this.other_buttons.set_no_show_all (true);
+		this.cover.set_no_show_all (false);
+		this.cover.show ();
+		
+		GLib.message ("hide_settings");
 	}
 	
 	public void draw () {
