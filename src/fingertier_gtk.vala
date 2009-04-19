@@ -177,6 +177,7 @@ public class PlayerGTK : Player {
 		//this.cover.hide ();
 		
 		GLib.message ("finger weg!");
+		decrease_volume ();
 		return true;
 	}
 	
