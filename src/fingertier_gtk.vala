@@ -122,7 +122,7 @@ public class PlayerGTK : Player {
 		
 		volume_label = new Gtk.Label (null);
 		volume_label.set_markup ("<span size=\"x-large\">%i %%</span>".printf
-								((int) Math.round (get_volume () * 100)));
+								((int) Math.round (this.volume * 100)));
 		
 		volume_control = new Gtk.HButtonBox ();
 		volume_control.set_layout (Gtk.ButtonBoxStyle.SPREAD);

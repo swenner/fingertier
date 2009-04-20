@@ -1,5 +1,7 @@
 Thanks:
-
-  * Thanks to the developers of gupnp-media-server. Your gstreamer
+  * The icon and the image of the default cover was copied from the 
+    Tango-Project (licensed as Public Domain).
+    http://tango.freedesktop.org/
+  * Thanks to the developers of the gupnp-media-server. Your gstreamer
     playbin code served me as valuable example code.
   * Christian Wäckerlin: Testing on Debian OM
