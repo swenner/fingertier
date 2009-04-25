@@ -1,7 +1,6 @@
 TODO:
   * create psyeudo random and a sorted playlist files on startup (or demand)
   * save playlist as efficient file (just the paths?)
-  * implement saving of the configuration
   * player should pause on call
   * player should prevent the phone from sleeping while playing
   * 'Aux' button should play next song if phone is locked (dbus)
