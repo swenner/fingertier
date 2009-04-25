@@ -7,31 +7,31 @@ player for mobile devices. It is optimised for smart phones with small touch
 screens, like the OpenMoko Freerunner.
 
 -----------------
-Dependencies:
+ Dependencies:
 -----------------
  * Vala >= 0.7.0
  * GLib-2.0
- * GTK+2.0
+ * GTK+-2.0
  * GIO-2.0
  * Gstreamer-0.10
 
 -----------------
-Install:
+ Install:
 -----------------
  ./configure
  make
  sudo make install
 
 -----------------
-Configuration:
+ Configuration:
 -----------------
- Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
- library folder.
- Files called 'cover.jpg' are displayed by the player.
- A click on the cover reveals the configuration menu.
+ * Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
+   library folder.
+ * Files called 'cover.jpg' in the same folder as your track are displayed by the player.
+ * A click on the cover reveals the configuration menu, where you can change the volume.
 
 -------------------
-Packaging (opkg):
+ Packaging (opkg):
 -------------------
 You need a working OpenMoko toolchain.
 HowTo: http://wiki.openmoko.org/wiki/Toolchain
