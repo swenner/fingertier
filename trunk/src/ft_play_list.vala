@@ -134,8 +134,8 @@ public class PlayList : GLib.Object {
 		GLib.FileInfo fileInfo;
 		
 		try {
-			FileEnumerator enumerator = dir.enumerate_children ("*", 
-					FileQueryInfoFlags.NONE, null);
+			GLib.FileEnumerator enumerator = dir.enumerate_children ("*", 
+					GLib.FileQueryInfoFlags.NONE, null);
 			
 			while ((fileInfo = enumerator.next_file (null)) != null) {
 				if (fileInfo.get_file_type () == GLib.FileType.DIRECTORY) {

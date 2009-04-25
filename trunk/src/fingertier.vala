@@ -102,7 +102,7 @@ public class Player : GLib.Object {
 
 	/* Callback to collect tags from playbin */
 	private void gst_tag_cb (Gst.Bus bus, Gst.Message message) {
-		TagList tag_list;
+		Gst.TagList tag_list;
 
 		message.parse_tag (out tag_list);
 		tag_list.foreach (this.save_tag); // NOTE: C warning: Bug filed upstream.
@@ -229,7 +229,7 @@ public class Player : GLib.Object {
 		double vol = 0;
 		pipeline.get_property ("volume", ref val);
 		vol = val.get_double ();
-		message ("Volume: %f", vol);
+		GLib.message ("Volume: %f", vol);
 	}
 	
 	public void decrease_volume () {
@@ -250,7 +250,7 @@ public class Player : GLib.Object {
 		double vol = 0;
 		pipeline.get_property ("volume", ref val);
 		vol = val.get_double ();
-		message ("Volume: %f", vol);
+		GLib.message ("Volume: %f", vol);
 	}
 }
 

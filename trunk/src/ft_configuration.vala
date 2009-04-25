@@ -22,11 +22,19 @@ namespace Ft {
 
 public class Configuration : GLib.Object {
 
-	public string library_path { get; set; 
-			default = Environment.get_home_dir () + "/music"; }
-	public uint track_number { get; set; default = 0; } /* [0, length-1] */
-	public PlayListMode mode { get; set; default = PlayListMode.NULL;}
-	public uint playlist_generation_timestamp { get; set; default = 0; }
+	public string library_path {
+		get; set;
+		default = Environment.get_home_dir () + "/music"; 
+	}
+	public uint track_number { /* [0, length-1] */
+		get; set; default = 0; 
+	}
+	public PlayListMode mode {
+		get; set; default = PlayListMode.NULL;
+	}
+	public uint playlist_generation_timestamp {
+		get; set; default = 0;
+	}
 
 	construct {
 		read ();
@@ -39,7 +47,7 @@ public class Configuration : GLib.Object {
 	
 	public bool read () {
 		// TODO: rewrite this horrible function
-		var dir = File.new_for_path (Environment.get_home_dir () + 
+		var dir = GLib.File.new_for_path (GLib.Environment.get_home_dir () + 
 										"/.fingertier");
 		if (!dir.query_exists (null)) {
     		GLib.message ("Directory '%s' doesn't exist.", dir.get_path ());
@@ -74,7 +82,7 @@ public class Configuration : GLib.Object {
 		string line;
 		uint u;
 		try {
-			var istream = new DataInputStream (file.read (null));
+			var istream = new GLib.DataInputStream (file.read (null));
 			while ((line = istream.read_line (null, null)) != null) {
 				if (line.has_prefix ("LIBRARY_PATH=")) {
 					this.library_path = line.substring (13, -1);
@@ -101,7 +109,7 @@ public class Configuration : GLib.Object {
 				}
 			}
 			istream.close (null);
-        } catch (IOError e) {
+        } catch (GLib.IOError e) {
     		GLib.warning ("%s", e.message);
 			return false;
 		}
