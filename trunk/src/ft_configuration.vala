@@ -35,6 +35,8 @@ public class Configuration : GLib.Object {
 	public uint playlist_generation_timestamp {
 		get; set; default = 0;
 	}
+	
+	private static string file_name = "fingertier.conf";
 
 	construct {
 		read ();
@@ -46,7 +48,6 @@ public class Configuration : GLib.Object {
 	}
 	
 	public bool read () {
-		// TODO: rewrite this horrible function
 		var dir = GLib.File.new_for_path (GLib.Environment.get_home_dir () + 
 										"/.fingertier");
 		if (!dir.query_exists (null)) {
@@ -54,71 +55,82 @@ public class Configuration : GLib.Object {
 			try {
 				dir.make_directory (null);
 			} catch {
-				GLib.error ("Could not create directory.");
+				GLib.error ("Could not create configuration directory.");
 				return false;
 			}
 		}
 		
-		var file = dir.get_child ("fingertier.conf");
+		var file = dir.get_child (this.file_name);
 		
 		if (!file.query_exists (null)) {
     		GLib.message ("File '%s' doesn't exist.", file.get_path ());
 			try {
-				var ostream = file.create (FileCreateFlags.NONE, null);
-				var data_stream = new DataOutputStream (ostream);
 				/* write defaults */
-				data_stream.put_string ("LIBRARY_PATH=%s\n".printf (library_path), null);
-				data_stream.put_string ("TRACK_NUMBER=%u\n".printf (track_number), null);
-				data_stream.put_string ("MODE=%u\n".printf (mode), null);
-				data_stream.put_string ("TIMESTAMP=%u\n".printf (playlist_generation_timestamp), null);
-				data_stream.close (null);
-				ostream.close (null);
+				var conf = new GLib.KeyFile ();
+				conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
+				conf.set_integer ("settings", "MODE", (int) this.mode);
+				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
+				conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
+				GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
+				
 			} catch (IOError e) {
-				GLib.error ("Could not create file.");
+				GLib.error ("Could not create configuration file.");
 			}
 			return false;
 		}
+		
 		/* read */
-		string line;
+		var conf = new GLib.KeyFile ();
 		uint u;
 		try {
-			var istream = new GLib.DataInputStream (file.read (null));
-			while ((line = istream.read_line (null, null)) != null) {
-				if (line.has_prefix ("LIBRARY_PATH=")) {
-					this.library_path = line.substring (13, -1);
-					stdout.printf ("library_path = %s\n", this.library_path);
-				} else if (line.has_prefix ("TRACK_NUMBER=")) {
-					u = line.substring (13, -1).to_int ();
-					if (u > 0)
-						this.track_number = u - 1;
-					else
-						this.track_number = 0;
-					stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
-				} else if (line.has_prefix ("MODE=")) {
-					u = line.substring (5, -1).to_int ();
-					if (u < 3)
-						this.mode = (PlayListMode) u;
-					else
-						this.mode = PlayListMode.NULL;
-					stdout.printf ("mode = %u\n", this.mode);
-				} else if (line.has_prefix ("TIMESTAMP=")) {
-					this.playlist_generation_timestamp = line.substring (10, -1).to_int ();
-					stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
-				} else {
-					GLib.message ("This configuration file contains garbage.");
-				}
-			}
-			istream.close (null);
-        } catch (GLib.IOError e) {
+			conf.load_from_file (file.get_path (), GLib.KeyFileFlags.NONE);
+			this.library_path = conf.get_string ("settings", "LIBRARY_PATH");
+			
+			u = (uint) conf.get_integer ("settings", "MODE");
+			if (u < 3)
+				this.mode = (PlayListMode) u;
+			else
+				this.mode = PlayListMode.NULL;
+			
+			u = (uint) conf.get_integer ("state", "TRACK_NUMBER");
+			if (u > 0)
+				this.track_number = u - 1;
+			else
+				this.track_number = 0;
+			
+			this.playlist_generation_timestamp = (uint) conf.get_integer ("state", "TIMESTAMP");
+			
+			stdout.printf ("library_path = %s\n", this.library_path);
+			stdout.printf ("mode = %u\n", this.mode);
+			stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
+			stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
+			
+		} catch (GLib.IOError e) {
     		GLib.warning ("%s", e.message);
 			return false;
 		}
+		
 		return true;
 	}
 
 	public bool write () {
-		// TODO: save all members to disk (~/.fingertier/fingertier.conf), which does exist.
-		return false;
+		var file = GLib.File.new_for_path (GLib.Environment.get_home_dir () + 
+										   "/.fingertier/" + file_name);
+		var conf = new GLib.KeyFile ();
+		conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
+		conf.set_integer ("settings", "MODE", (int) this.mode);
+		conf.set_integer ("state", "TRACK_NUMBER", (int) (this.track_number  + 1));
+		conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
+		
+		try {
+			GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
+			
+		} catch (IOError e) {
+			GLib.error ("Could not write configuration file.");
+			return false;
+		}
+		
+		return true;
 	}
 
 }
