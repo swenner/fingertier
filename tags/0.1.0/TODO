@@ -1,0 +1,34 @@
+TODO:
+  * create psyeudo random and a sorted playlist files on startup (or demand)
+  * save playlist as efficient file (just the paths?)
+  * player should pause on call
+  * player should prevent the phone from sleeping while playing
+  * 'Aux' button should play next song if phone is locked (dbus)
+  * library creation progress bar. GUI should never get locked.
+  * Is the GIO dependency really neccessary?
+
+Ideas:
+  * EFL GUI
+  * Clutter GUI
+
+Ressources:
+
+DBus: http://git.freesmartphone.org/?p=specs.git;a=blob_plain;f=html/index.html;hb=HEAD
+DBus: http://valadoc.org/?pkg=dbus-glib-1
+Libeflvala: http://git.freesmartphone.org/?p=libeflvala.git;a=summary
+
+GTK layout:
+
++------------------------+
+|                        |
+|       cover image      |
+|                        |
++------------------------+
+|         artist         |
+|         title          |
+|         album          |
++------------------------+
+|         3/120          |
++------------------------+
+| prev, play/pause, next |
++------------------------+
