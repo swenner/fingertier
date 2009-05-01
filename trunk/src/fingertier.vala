@@ -97,7 +97,7 @@ public class Player : GLib.Object {
 	/* Callback if the end of a track is reached */
 	private void gst_end_of_stream_cb (Gst.Bus bus, Gst.Message message) {
 		GLib.message ("End of stream (eos) reached.");
-		this.next();
+		this.next ();
 	}
 
 	/* Callback to collect tags from playbin */
@@ -169,31 +169,38 @@ public class Player : GLib.Object {
 
 	public void next () {
 		Track? t = pl.get_next_track ();
-		if (t == null)
-			return;
-		
+		if (t == null) {
+			/* cyclic play list */
+			t = pl.get_first_track ();
+			if (t == null)
+				return;
+		}
 		track = t;
-	
+
 		Gst.State old_state;
 		Gst.ClockTime time = Gst.util_get_timestamp ();
 		this.pipeline.get_state (out old_state, null, time);
-
+	
 		this.pipeline.set_state (Gst.State.READY);
 		this.pipeline.set ("uri", track.uri);
-		track_tags_changed ();
-		track_cover_path_changed ();
-	
+		
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
 		else
 			this.pipeline.set_state (Gst.State.PAUSED);
+		
+		track_tags_changed ();
+		track_cover_path_changed ();
 	}
 
 	public void previous () {
 		Track? t = pl.get_previous_track ();
-		if (t == null)
-			return;
-		
+		if (t == null) {
+			/* cyclic play list */
+			t = pl.get_last_track ();
+			if (t == null)
+				return;
+		}
 		track = t;
 
 		Gst.State old_state;
@@ -202,13 +209,14 @@ public class Player : GLib.Object {
 
 		this.pipeline.set_state (Gst.State.READY);
 		pipeline.set ("uri", track.uri);
-		track_tags_changed ();
-		track_cover_path_changed ();
 
 		if (old_state == State.PLAYING)
 			this.pipeline.set_state (Gst.State.PLAYING);
 		else
 			this.pipeline.set_state (Gst.State.PAUSED);
+		
+		track_tags_changed ();
+		track_cover_path_changed ();
 	}
 	
 	public void increase_volume () {

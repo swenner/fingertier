@@ -75,6 +75,24 @@ public class PlayList : GLib.Object {
 		return build_track ();
 	}
 	
+	// not used atm
+	public Track? get_track (uint number) { /* number [1:length] */
+		if (length <= 0 || number <= 0 || number > length)
+			return null;
+		conf.track_number = number - 1;
+		return build_track ();
+	}
+	
+	public Track? get_first_track () {
+		conf.track_number = 0;
+		return build_track ();
+	}
+	
+	public Track? get_last_track () {
+		conf.track_number = length - 1;
+		return build_track ();
+	}
+	
 	/* Private functions */
 	private Track build_track () { // TODO: replace, when structs are fixed in Vala.
 		/* Track t = Track () {
@@ -101,7 +119,7 @@ public class PlayList : GLib.Object {
 		suffix = this.playlist.nth_data (conf.track_number);
 		weak string it = suffix;
 		
-		while (it.len () > 0) { 
+		while (it.len () > 0) {
 			if (it.get_char () == '/')
 				slash = pos;
 			pos++;
