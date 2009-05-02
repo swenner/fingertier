@@ -38,7 +38,8 @@ public class PlayerGTK : Player {
 	private Gtk.Window window;
 	private string last_cover_path; /* optimisation to avoid unneccessary cover reloads */
 
-	construct {
+	public PlayerGTK (PlayList list) {
+		base.init (list);
 		create_widgets ();
 		/* register signal handler */
 		this.track_tags_changed += update_tag_widgets;
