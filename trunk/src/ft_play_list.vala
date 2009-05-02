@@ -33,7 +33,6 @@ public interface PlayList : GLib.Object {
 	public abstract Track? get_track (uint number); /* number [1:length] */
 	public abstract Track? get_first_track ();
 	public abstract Track? get_last_track ();
-	
 }
 
 } /* namespace Ft end */

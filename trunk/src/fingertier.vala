@@ -56,7 +56,8 @@ public enum PlayerState {
 public class Player : GLib.Object {
 
 	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
-	private PlayListSimple pl;		/* handles the state and the data of the player */
+	private PlayList pl;		/* handles the state and the data of the player */
+	//private Configuration conf;
 	public Track? track {
 		get;
 		private set;
@@ -66,16 +67,31 @@ public class Player : GLib.Object {
 		private set;
 		default = 1.0;
 	}
-
-	construct {
-		pl = new PlayListSimple ();
-		track = pl.get_current_track ();
-		setup_pipeline ();
+	public double track_position {
+		get;
+		private set;
+		default = 0.0;
+	}
+	
+	/* constructor */
+	public Player (PlayList list) {
+		init (list);
 	}
 
 	/* destructor */
 	~Player () {
 		this.pipeline.set_state (Gst.State.NULL);
+	}
+	
+	/* Protected functions and signals */
+	protected signal void track_tags_changed ();
+	protected signal void track_cover_path_changed ();
+	protected signal void volume_changed (double volume);
+	
+	protected void init (PlayList list) {
+		pl = list;
+		track = pl.get_current_track ();
+		setup_pipeline ();
 	}
 
 	private void setup_pipeline () {
@@ -142,11 +158,6 @@ public class Player : GLib.Object {
 				break;
 		}
 	}
-
-	/* Protected functions and signals */
-	protected signal void track_tags_changed ();
-	protected signal void track_cover_path_changed ();
-	protected signal void volume_changed (double volume);
 
 	/* Public functions */
 	public PlayerState play_pause () {
@@ -268,7 +279,8 @@ public static int main (string[] args) {
 	Gst.init (ref args);
 	
 	Gtk.init (ref args);
-	var player = new Ft.PlayerGTK ();
+	var playlist = new Ft.PlayListSimple ();
+	var player = new Ft.PlayerGTK (playlist);
 	player.draw ();
 	Gtk.main ();
 	
