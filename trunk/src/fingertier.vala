@@ -46,6 +46,10 @@ public enum PlayListMode {
 	SHUFFLED
 }
 
+public enum PlayListType {
+	SIMPLE = 0
+}
+
 public enum PlayerState {
 	NULL = 0,
 	PAUSED,
@@ -57,7 +61,6 @@ public class Player : GLib.Object {
 
 	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
 	private PlayList pl;		/* handles the state and the data of the player */
-	//private Configuration conf;
 	public Track? track {
 		get;
 		private set;
@@ -72,10 +75,14 @@ public class Player : GLib.Object {
 		private set;
 		default = 0.0;
 	}
+	public Configuration conf {
+		get;
+		private set;
+	}
 	
 	/* constructor */
-	public Player (PlayList list) {
-		init (list);
+	public Player (PlayListType type) {
+		init (type);
 	}
 
 	/* destructor */
@@ -88,8 +95,9 @@ public class Player : GLib.Object {
 	protected signal void track_cover_path_changed ();
 	protected signal void volume_changed (double volume);
 	
-	protected void init (PlayList list) {
-		pl = list;
+	protected void init (PlayListType type) {
+		conf = new Configuration ();
+		pl = new PlayListSimple (this.conf);
 		track = pl.get_current_track ();
 		setup_pipeline ();
 	}
@@ -279,8 +287,7 @@ public static int main (string[] args) {
 	Gst.init (ref args);
 	
 	Gtk.init (ref args);
-	var playlist = new Ft.PlayListSimple ();
-	var player = new Ft.PlayerGTK (playlist);
+	var player = new Ft.PlayerGTK (Ft.PlayListType.SIMPLE);
 	player.draw ();
 	Gtk.main ();
 	
