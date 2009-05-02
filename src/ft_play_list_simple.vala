@@ -22,12 +22,12 @@ namespace Ft {
 
 public class PlayListSimple : GLib.Object, PlayList {
 
-	private Configuration conf;
+	private weak Configuration conf;
 	private GLib.List<string> playlist; /* contains paths relative to the library path */
 	private uint length;
 
-	construct {
-		conf = new Configuration ();
+	public PlayListSimple (Configuration c) {
+		conf = c;
 		build_playlist ();
 		
 		if (conf.track_number >= length)
