@@ -56,7 +56,7 @@ public enum PlayerState {
 public class Player : GLib.Object {
 
 	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
-	private PlayList pl;			/* handles the state and the data of the player */
+	private PlayListSimple pl;		/* handles the state and the data of the player */
 	public Track? track {
 		get;
 		private set;
@@ -68,7 +68,7 @@ public class Player : GLib.Object {
 	}
 
 	construct {
-		pl = new PlayList ();
+		pl = new PlayListSimple ();
 		track = pl.get_current_track ();
 		setup_pipeline ();
 	}

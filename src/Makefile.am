@@ -14,6 +14,7 @@ fingertier_VALASOURCES = \
 	fingertier_gtk.vala \
 	ft_configuration.vala \
 	ft_play_list.vala \
+	ft_play_list_simple.vala \
 	config.vapi \
 	$(NULL)
 
