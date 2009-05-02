@@ -35,6 +35,9 @@ public class Configuration : GLib.Object {
 	public uint playlist_generation_timestamp {
 		get; set; default = 0;
 	}
+	public double volume { /* [0.0, 1.0] linear, but player uses exp. volume control */
+		get; set; default = 1.0;
+	}
 	
 	private static string file_name = "fingertier.conf";
 
@@ -69,6 +72,7 @@ public class Configuration : GLib.Object {
 				var conf = new GLib.KeyFile ();
 				conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 				conf.set_integer ("settings", "MODE", (int) this.mode);
+				conf.set_double ("settings", "VOLUME", this.volume);
 				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
 				conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 				GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
@@ -82,6 +86,7 @@ public class Configuration : GLib.Object {
 		/* read */
 		var conf = new GLib.KeyFile ();
 		uint u;
+		double d;
 		try {
 			conf.load_from_file (file.get_path (), GLib.KeyFileFlags.NONE);
 			this.library_path = conf.get_string ("settings", "LIBRARY_PATH");
@@ -98,10 +103,17 @@ public class Configuration : GLib.Object {
 			else
 				this.track_number = 0;
 			
+			d = conf.get_double ("settings", "VOLUME");
+			if (d >= 0.0 && d <= 1.0)
+				this.volume = d;
+			else
+				this.volume = 1.0;
+			
 			this.playlist_generation_timestamp = (uint) conf.get_integer ("state", "TIMESTAMP");
 			
 			stdout.printf ("library_path = %s\n", this.library_path);
 			stdout.printf ("mode = %u\n", this.mode);
+			stdout.printf ("volume = %f\n", this.volume);
 			stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
 			stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
 			
@@ -119,6 +131,7 @@ public class Configuration : GLib.Object {
 		var conf = new GLib.KeyFile ();
 		conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 		conf.set_integer ("settings", "MODE", (int) this.mode);
+		conf.set_double ("settings", "VOLUME", this.volume);
 		conf.set_integer ("state", "TRACK_NUMBER", (int) (this.track_number  + 1));
 		conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 		
@@ -132,7 +145,6 @@ public class Configuration : GLib.Object {
 		
 		return true;
 	}
-
 }
 
 } /* namespace Ft end */

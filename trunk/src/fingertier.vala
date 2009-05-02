@@ -65,11 +65,6 @@ public class Player : GLib.Object {
 		get;
 		private set;
 	}
-	public double volume { /* [0.0, 1.0] linear, but player uses exp. volume control */
-		get;
-		private set;
-		default = 1.0;
-	}
 	public double track_position {
 		get;
 		private set;
@@ -241,16 +236,16 @@ public class Player : GLib.Object {
 	public void increase_volume () {
 		GLib.Value val = GLib.Value (typeof(double));
 		
-		if (volume < 0.9) {
-			volume += 0.1;
-			val.set_double ((Math.exp (volume) - 1) / (Math.E - 1));
+		if (conf.volume < 0.9) {
+			conf.volume += 0.1;
+			val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
 			pipeline.set_property ("volume", val);
-			volume_changed (volume);
-		} else if (volume >= 0.9) {
-			volume = 1.0;
-			val.set_double (volume);
+			volume_changed (conf.volume);
+		} else if (conf.volume >= 0.9) {
+			conf.volume = 1.0;
+			val.set_double (conf.volume);
 			pipeline.set_property ("volume", val);
-			volume_changed (volume);
+			volume_changed (conf.volume);
 		}
 		// debug
 		double vol = 0;
@@ -262,16 +257,16 @@ public class Player : GLib.Object {
 	public void decrease_volume () {
 		GLib.Value val = GLib.Value (typeof(double));
 		
-		if (volume > 0.1) {
-			volume -= 0.1;
-			val.set_double ((Math.exp (volume) - 1) / (Math.E - 1));
+		if (conf.volume > 0.1) {
+			conf.volume -= 0.1;
+			val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
 			pipeline.set_property ("volume", val);
-			volume_changed (volume);
-		} else if (volume <= 0.1) {
-			volume = 0.0;
-			val.set_double (volume);
+			volume_changed (conf.volume);
+		} else if (conf.volume <= 0.1) {
+			conf.volume = 0.0;
+			val.set_double (conf.volume);
 			pipeline.set_property ("volume", val);
-			volume_changed (volume);
+			volume_changed (conf.volume);
 		}
 		// debug
 		double vol = 0;
