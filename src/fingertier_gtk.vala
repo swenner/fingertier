@@ -155,7 +155,7 @@ public class PlayerGTK : Player {
 		this.window = new Gtk.Window (Gtk.WindowType.TOPLEVEL);
 		this.window.add (vbox);
 		
-		this.window.title = "Fingertier Music Player";
+		this.window.title = "Fingertier";
 		this.window.set_default_size (480, 512); /* OM GTA02 screen size: 480x640 */
 		this.window.set_border_width (16);
 		this.window.position = Gtk.WindowPosition.CENTER;
