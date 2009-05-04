@@ -6,6 +6,8 @@ Version 0.2.0 - ???
 ---------------------------------
  * play list is cyclic
  * volume level gets saved
+ * cover file names can be configured
+ * many bug fixes
 
 Version 0.1.0 - 26 April 2009
 ---------------------------------
