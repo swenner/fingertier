@@ -127,7 +127,19 @@ public class PlayListSimple : GLib.Object, PlayList {
 		}
 		
 		string s = suffix.substring (0, slash);
-		path = conf.library_path + "/" + s + "/cover.jpg";
+		List<string> files = new List<string> ();
+		files.append ("/folder.jpg");
+		files.append ("/cover.jpg");
+		files.append ("/cover");
+		var base_path = conf.library_path + "/" + s;
+		/* default path is an invalid one for taking default icon*/
+		path = base_path + "no_cover";
+		foreach (string file_name in files) {
+			var file = File.new_for_path (base_path + file_name);
+			if (file.query_exists (null)) {
+				path = file.get_path ();
+			}
+		}
 		
 		return path;
 	}
