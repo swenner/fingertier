@@ -76,7 +76,7 @@ public class Configuration : GLib.Object {
 				conf.set_integer ("settings", "MODE", (int) this.mode);
 				conf.set_double ("settings", "VOLUME", this.volume);
 				this.covers = new string[3] { "cover.jpg", "folder.jpg", "cover.png" };
-				conf.set_string_list ("settings", "COVER_NAMES", this.covers);
+				conf.set_string_list ("settings", "COVER_NAMES", this.covers); // TODO: C warning!
 				
 				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
 				conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
@@ -118,7 +118,7 @@ public class Configuration : GLib.Object {
 			this.playlist_generation_timestamp = (uint) conf.get_integer ("state", "TIMESTAMP");
 			
 			try {
-				c = conf.get_string_list ("settings", "COVER_NAMES");
+				c = conf.get_string_list ("settings", "COVER_NAMES"); // TODO: C warning!
 				this.covers = c;
 				if (this.covers == null)
 					this.covers = new string[0] { };
@@ -152,7 +152,7 @@ public class Configuration : GLib.Object {
 		conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 		conf.set_integer ("settings", "MODE", (int) this.mode);
 		conf.set_double ("settings", "VOLUME", this.volume);
-		conf.set_string_list ("settings", "COVER_NAMES", this.covers);
+		conf.set_string_list ("settings", "COVER_NAMES", this.covers); // TODO: C warning!
 		
 		conf.set_integer ("state", "TRACK_NUMBER", (int) (this.track_number  + 1));
 		conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
