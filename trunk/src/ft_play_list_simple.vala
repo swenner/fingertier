@@ -84,11 +84,15 @@ public class PlayListSimple : GLib.Object, PlayList {
 	}
 	
 	public Track? get_first_track () {
+		if (length <= 0)
+			return null;
 		conf.track_number = 0;
 		return build_track ();
 	}
 	
 	public Track? get_last_track () {
+		if (length <= 0)
+			return null;
 		conf.track_number = length - 1;
 		return build_track ();
 	}
@@ -126,18 +130,15 @@ public class PlayListSimple : GLib.Object, PlayList {
 			it = it.next_char ();
 		}
 		
-		string s = suffix.substring (0, slash);
-		List<string> files = new List<string> ();
-		files.append ("/folder.jpg");
-		files.append ("/cover.jpg");
-		files.append ("/cover");
+		string s = suffix.substring (0, slash + 1);
 		var base_path = conf.library_path + "/" + s;
-		/* default path is an invalid one for taking default icon*/
+		/* default path is an invalid one for taking default icon */
 		path = base_path + "no_cover";
-		foreach (string file_name in files) {
+		foreach (string file_name in conf.covers) {
 			var file = File.new_for_path (base_path + file_name);
 			if (file.query_exists (null)) {
 				path = file.get_path ();
+				break;
 			}
 		}
 		

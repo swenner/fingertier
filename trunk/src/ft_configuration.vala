@@ -38,10 +38,12 @@ public class Configuration : GLib.Object {
 	public double volume { /* [0.0, 1.0] linear, but player uses exp. volume control */
 		get; set; default = 1.0;
 	}
+	public string[] covers; /* all accepted cover names */
 	
 	private static string file_name = "fingertier.conf";
 
 	construct {
+		covers = new string[0] { };
 		read ();
 	}
 	
@@ -73,6 +75,9 @@ public class Configuration : GLib.Object {
 				conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 				conf.set_integer ("settings", "MODE", (int) this.mode);
 				conf.set_double ("settings", "VOLUME", this.volume);
+				this.covers = new string[3] { "cover.jpg", "folder.jpg", "cover.png" };
+				conf.set_string_list ("settings", "COVER_NAMES", this.covers);
+				
 				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
 				conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 				GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
@@ -87,6 +92,7 @@ public class Configuration : GLib.Object {
 		var conf = new GLib.KeyFile ();
 		uint u;
 		double d;
+		string[] c;
 		try {
 			conf.load_from_file (file.get_path (), GLib.KeyFileFlags.NONE);
 			this.library_path = conf.get_string ("settings", "LIBRARY_PATH");
@@ -111,11 +117,25 @@ public class Configuration : GLib.Object {
 			
 			this.playlist_generation_timestamp = (uint) conf.get_integer ("state", "TIMESTAMP");
 			
+			try {
+				c = conf.get_string_list ("settings", "COVER_NAMES");
+				this.covers = c;
+				if (this.covers == null)
+					this.covers = new string[0] { };
+			} catch (GLib.KeyFileError e) {
+				GLib.warning ("%s", e.message);
+			}
+			
+			// Debug
 			stdout.printf ("library_path = %s\n", this.library_path);
 			stdout.printf ("mode = %u\n", this.mode);
 			stdout.printf ("volume = %f\n", this.volume);
 			stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
 			stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
+			stdout.printf ("cover_names = ");
+			foreach(string s in this.covers)
+				stdout.printf ("%s, ", s);
+			stdout.printf ("\n\n");
 			
 		} catch (GLib.IOError e) {
     		GLib.warning ("%s", e.message);
@@ -132,6 +152,8 @@ public class Configuration : GLib.Object {
 		conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 		conf.set_integer ("settings", "MODE", (int) this.mode);
 		conf.set_double ("settings", "VOLUME", this.volume);
+		conf.set_string_list ("settings", "COVER_NAMES", this.covers);
+		
 		conf.set_integer ("state", "TRACK_NUMBER", (int) (this.track_number  + 1));
 		conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 		
@@ -142,6 +164,8 @@ public class Configuration : GLib.Object {
 			GLib.error ("Could not write configuration file.");
 			return false;
 		}
+		// Debug
+		stdout.printf ("Configuration saved\n");
 		
 		return true;
 	}
