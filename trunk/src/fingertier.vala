@@ -111,6 +111,10 @@ public class Player : GLib.Object {
 			this.pipeline.set ("uri", track.uri);
 			this.pipeline.set_state (Gst.State.PAUSED);
 		}
+		
+		GLib.Value val = GLib.Value (typeof(double));
+		val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
+		pipeline.set_property ("volume", val);
 	}
 
 	/* Callback if the end of a track is reached */
