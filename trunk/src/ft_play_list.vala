@@ -21,18 +21,19 @@ using GLib;
 namespace Ft {
 
 public interface PlayList : GLib.Object {
-
-	//public abstract void set_mode (PlayListMode mode); // TODO: C errors (vala 0.7.0)
-	//public abstract PlayListMode get_mode (); // TODO: C errors (vala 0.7.0)
-	public abstract bool do_shuffle ();
 	
+	// TODO: do we really neeed these interfaces?
+	public abstract void set_mode (PlayListMode mode);
+	public abstract PlayListMode get_mode ();
+	public abstract bool do_shuffle ();
+	// needed interfaces:
 	public abstract Track? get_current_track ();
 	public abstract Track? get_next_track ();
 	public abstract Track? get_previous_track ();
-	// not used atm
-	public abstract Track? get_track (uint number); /* number [1:length] */
 	public abstract Track? get_first_track ();
 	public abstract Track? get_last_track ();
+	// not used atm
+	public abstract Track? get_track (uint number); /* number [1:length] */
 }
 
 } /* namespace Ft end */
