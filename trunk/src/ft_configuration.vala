@@ -24,24 +24,23 @@ public class Configuration : GLib.Object {
 
 	public string library_path {
 		get; set;
-		default = Environment.get_home_dir () + "/music"; 
+		default = Environment.get_home_dir () + "/music";
 	}
 	public uint track_number { /* [0, length-1] */
-		get; set; default = 0; 
+		get; set; default = 0;
 	}
 	public PlayListMode mode {
 		get; set; default = PlayListMode.NULL;
-	}
-	public uint playlist_generation_timestamp {
-		get; set; default = 0;
 	}
 	public double volume { /* [0.0, 1.0] linear, but player uses exp. volume control */
 		get; set; default = 1.0;
 	}
 	public string[] covers; /* all accepted cover names */
 	
+	public static string path = GLib.Environment.get_home_dir ()
+								+ "/.fingertier";
 	private static string file_name = "fingertier.conf";
-
+	
 	construct {
 		covers = new string[0] { };
 		read ();
@@ -53,8 +52,7 @@ public class Configuration : GLib.Object {
 	}
 	
 	public bool read () {
-		var dir = GLib.File.new_for_path (GLib.Environment.get_home_dir () + 
-										"/.fingertier");
+		var dir = GLib.File.new_for_path (this.path);
 		if (!dir.query_exists (null)) {
     		GLib.message ("Directory '%s' doesn't exist.", dir.get_path ());
 			try {
@@ -76,10 +74,9 @@ public class Configuration : GLib.Object {
 				conf.set_integer ("settings", "MODE", (int) this.mode);
 				conf.set_double ("settings", "VOLUME", this.volume);
 				this.covers = new string[3] { "cover.jpg", "folder.jpg", "cover.png" };
-				conf.set_string_list ("settings", "COVER_NAMES", this.covers); // TODO: C warning!
+				conf.set_string_list ("settings", "COVER_NAMES", this.covers); // NOTE: C warning: Bug filed upstream.
 				
 				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
-				conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 				GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
 				
 			} catch (IOError e) {
@@ -115,10 +112,8 @@ public class Configuration : GLib.Object {
 			else
 				this.volume = 1.0;
 			
-			this.playlist_generation_timestamp = (uint) conf.get_integer ("state", "TIMESTAMP");
-			
 			try {
-				c = conf.get_string_list ("settings", "COVER_NAMES"); // TODO: C warning!
+				c = conf.get_string_list ("settings", "COVER_NAMES"); // NOTE: C warning: Bug filed upstream.
 				this.covers = c;
 				if (this.covers == null)
 					this.covers = new string[0] { };
@@ -131,7 +126,6 @@ public class Configuration : GLib.Object {
 			stdout.printf ("mode = %u\n", this.mode);
 			stdout.printf ("volume = %f\n", this.volume);
 			stdout.printf ("track_number = %u (TRACK_NUMBER - 1)\n", this.track_number);
-			stdout.printf ("timestamp = %u\n", this.playlist_generation_timestamp);
 			stdout.printf ("cover_names = ");
 			foreach(string s in this.covers)
 				stdout.printf ("%s, ", s);
@@ -146,16 +140,14 @@ public class Configuration : GLib.Object {
 	}
 
 	public bool write () {
-		var file = GLib.File.new_for_path (GLib.Environment.get_home_dir () + 
-										   "/.fingertier/" + file_name);
+		var file = GLib.File.new_for_path (this.path + "/" + this.file_name);
 		var conf = new GLib.KeyFile ();
 		conf.set_string ("settings", "LIBRARY_PATH", this.library_path);
 		conf.set_integer ("settings", "MODE", (int) this.mode);
 		conf.set_double ("settings", "VOLUME", this.volume);
-		conf.set_string_list ("settings", "COVER_NAMES", this.covers); // TODO: C warning!
+		conf.set_string_list ("settings", "COVER_NAMES", this.covers); // NOTE: C warning: Bug filed upstream.
 		
 		conf.set_integer ("state", "TRACK_NUMBER", (int) (this.track_number  + 1));
-		conf.set_integer ("state", "TIMESTAMP", (int) this.playlist_generation_timestamp);
 		
 		try {
 			GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
@@ -165,7 +157,7 @@ public class Configuration : GLib.Object {
 			return false;
 		}
 		// Debug
-		stdout.printf ("Configuration saved\n");
+		stdout.printf ("Configuration saved.\n");
 		
 		return true;
 	}
