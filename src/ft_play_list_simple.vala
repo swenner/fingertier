@@ -143,9 +143,28 @@ public class PlayListSimple : GLib.Object, PlayList {
 	
 	private void build_playlist () {
 		playlist = new GLib.List<string> ();
+		GLib.TimeVal mod_time_folder = TimeVal ();
+		GLib.TimeVal mod_time_pl = TimeVal ();
 		
 		var dir = File.new_for_path (conf.library_path);
-		// GLib.FileInfo.get_modification_time
+		var pl = File.new_for_path (conf.path + "/playlist-sorted");
+		
+		try {
+			var info = dir.query_info (GLib.FILE_ATTRIBUTE_TIME_MODIFIED, 
+									   GLib.FileQueryInfoFlags.NONE, null);
+			info.get_modification_time (mod_time_folder);
+			stdout.printf ("Modification Time: Folder: %ld\n", mod_time_folder.tv_sec);
+			
+			if (pl.query_exists (null)) {
+				info = pl.query_info (GLib.FILE_ATTRIBUTE_TIME_MODIFIED, 
+									  GLib.FileQueryInfoFlags.NONE, null);
+				info.get_modification_time (mod_time_pl);
+				stdout.printf ("Modification Time: Playlist: %ld\n", mod_time_pl.tv_sec);
+			}
+		} catch (GLib.Error e) {
+			GLib.warning ("%s\n", e.message);
+		}
+		
 		process_directory (dir, "");
 		
 		// DEBUG
