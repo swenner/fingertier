@@ -9,7 +9,7 @@ screens, like the OpenMoko Freerunner.
 -----------------
  Dependencies:
 -----------------
- * Vala >= 0.7.0
+ * Vala >= 0.7.2
  * GLib-2.0
  * GTK+-2.0
  * GIO-2.0

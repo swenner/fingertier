@@ -52,13 +52,13 @@ public class PlayListSimple : GLib.Object, PlayList {
 		return false;
 	}
 	
-	public Track? get_current_track () { // TODO: C warning! Known bug upstream
+	public Track? get_current_track () {
 		if (length <= 0)
 			return null;
 		return build_track ();
 	}
 	
-	public Track? get_next_track () { // TODO: C warning! Known bug upstream
+	public Track? get_next_track () {
 		if (conf.track_number + 1 >= length) {
 			return null;
 		}
@@ -67,7 +67,7 @@ public class PlayListSimple : GLib.Object, PlayList {
 		return build_track ();
 	}
 	 
-	public Track? get_previous_track () { // TODO: C warning! Known bug upstream
+	public Track? get_previous_track () {
 		if (conf.track_number <= 0)
 			return null;
 		
@@ -98,19 +98,15 @@ public class PlayListSimple : GLib.Object, PlayList {
 	}
 	
 	/* Private functions */
-	private Track build_track () { // TODO: replace, when structs are fixed in Vala.
-		/* Track t = Track () {
+	private Track build_track () {
+		Track t = Track () {
 			number = conf.track_number + 1,
 			pl_len = length,
 			uri = "file://" + conf.library_path + "/" + 
 				  this.playlist.nth_data (conf.track_number),
 			cover_path = get_cover_path (),
 			artist = "", title = "", album = ""
-		}; */
-		Track t = new Track (conf.track_number + 1,
-					length, "file://" + conf.library_path + "/" + 
-					this.playlist.nth_data (conf.track_number), 
-					get_cover_path ());
+		};
 		return t;
 	}
 	
