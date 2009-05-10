@@ -21,23 +21,14 @@ using Gst;
 
 namespace Ft {
 	
-/* public struct Track { */ // TODO: should be a struct, but they are broken in Vala 0.7.0.
-public class Track {
-	public uint number;	/* [1, length] */
-	public uint pl_len; /* length of the playlist */
-	public string uri;
+public struct Track {
+	public uint number;	 /* [1, pl_len] */
+	public uint pl_len;	 /* length of the playlist */
+	public string uri;	 /* uri to the track */
 	public string cover_path;
 	public string artist;
 	public string title;
 	public string album;
-
-	public Track (uint n, uint l, string u, string cp) {
-		number = n;
-		pl_len = l;
-		uri = u;
-		cover_path = cp;
-		artist = ""; title = ""; album = "";
-	}
 }	
 
 public enum PlayListMode {
