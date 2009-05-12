@@ -24,7 +24,7 @@ public class Configuration : GLib.Object {
 
 	public string library_path {
 		get; set;
-		default = Environment.get_home_dir () + "/music";
+		default = Environment.get_home_dir () + "/Music";
 	}
 	public uint track_number { /* [0, length-1] */
 		get; set; default = 0;
