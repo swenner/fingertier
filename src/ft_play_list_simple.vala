@@ -148,6 +148,7 @@ public class PlayListSimple : GLib.Object, PlayList {
 		
 		var dir = File.new_for_path (conf.library_path);
 		var pl = File.new_for_path (conf.path + "/playlist-sorted");
+		// TODO: FileInputStream
 		
 		try {
 			var info = dir.query_info (GLib.FILE_ATTRIBUTE_TIME_MODIFIED, 

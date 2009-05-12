@@ -26,8 +26,10 @@ screens, like the OpenMoko Freerunner.
  Configuration:
 -----------------
  * Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
-   library folder.
- * Files called 'cover.jpg' in the same folder as your track are displayed by the player.
+   library folder. The default music folder is ~/Music.
+ * Files called 'cover.jpg' or 'folder.jpg' in the same folder as your track 
+   are displayed by the player. The list of accepted cover file names can be 
+   configured in ~/.fingertier/fingertier.conf too.
  * A click on the cover reveals the configuration menu, where you can change the volume.
 
 -------------------
