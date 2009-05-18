@@ -23,7 +23,7 @@ nodist_fingertier_SOURCES = \
 	$(NULL)
 
 fingertier.vala.stamp: $(fingertier_VALASOURCES)
-	$(VALAC) -C --pkg gtk+-2.0 --pkg gstreamer-0.10 --pkg gio-2.0 --save-temps --basedir $(top_srcdir) $^
+	$(VALAC) -C --pkg gtk+-2.0 --pkg dbus-glib-1 --pkg gstreamer-0.10 --pkg gio-2.0 --save-temps --basedir $(top_srcdir) $^
 	touch $@
 
 fingertier_LDADD = \

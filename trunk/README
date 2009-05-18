@@ -14,6 +14,7 @@ screens, like the OpenMoko Freerunner.
  * GTK+-2.0
  * GIO-2.0
  * Gstreamer-0.10
+ * DBus-GLib-1
 
 -----------------
  Install:

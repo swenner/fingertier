@@ -52,6 +52,8 @@ public class Player : GLib.Object {
 
 	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
 	private PlayList pl;		/* handles the state and the data of the player */
+	private DBus.Connection conn;
+	private dynamic DBus.Object dialer;
 	public Track? track {
 		get;
 		private set;
@@ -82,6 +84,7 @@ public class Player : GLib.Object {
 	protected signal void volume_changed (double volume);
 	
 	protected void init (PlayListType type) {
+		setup_dbus ();
 		conf = new Configuration ();
 		pl = new PlayListSimple (this.conf);
 		track = pl.get_current_track ();
@@ -106,6 +109,30 @@ public class Player : GLib.Object {
 		GLib.Value val = GLib.Value (typeof(double));
 		val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
 		pipeline.set_property ("volume", val);
+	}
+	
+	private void setup_dbus () {
+		try {
+			//this.conn = DBus.Bus.get (DBus.BusType.SYSTEM);
+			this.conn =  DBus.Bus.get (DBus.BusType.SESSION);
+			this.dialer = this.conn.get_object("org.freesmartphone.Phone", 
+											   "/org/freesmartphone/Phone", 
+											   "org.freesmartphone.Phone");
+			this.dialer.Incoming += dbus_incoming_call;
+			
+			dynamic DBus.Object resources = this.conn.get_object ("org.freesmartphone.Usage", 
+																  "/org/freesmartphone/Usage", 
+																  "org.freesmartphone.Usage");
+			resources.RequestResource ("CPU");
+
+		} catch (DBus.Error e) {
+            GLib.warning ("Could not get DBus Session Bus: %s", e.message);
+		}
+	}
+	
+	private void dbus_incoming_call (dynamic DBus.Object obj) {
+		stdout.printf ("Incomming call!\n");
+	
 	}
 
 	/* Callback if the end of a track is reached */
