@@ -52,8 +52,8 @@ public class Player : GLib.Object {
 
 	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
 	private PlayList pl;		/* handles the state and the data of the player */
-	private DBus.Connection conn;
-	private dynamic DBus.Object dialer;
+	private DBus.Connection sysbus;
+	private dynamic DBus.Object phone;
 	public Track? track {
 		get;
 		private set;
@@ -113,20 +113,22 @@ public class Player : GLib.Object {
 	
 	private void setup_dbus () {
 		try {
-			//this.conn = DBus.Bus.get (DBus.BusType.SYSTEM);
-			this.conn =  DBus.Bus.get (DBus.BusType.SESSION);
-			this.dialer = this.conn.get_object("org.freesmartphone.Phone", 
-											   "/org/freesmartphone/Phone", 
-											   "org.freesmartphone.Phone");
-			this.dialer.Incoming += dbus_incoming_call;
+			this.sysbus = DBus.Bus.get (DBus.BusType.SYSTEM);
+			this.phone = this.sysbus.get_object("org.freesmartphone.ophoned",
+                                     "/org/freesmartphone/Phone/Call",
+                                     "org.freesmartphone.Phone.Call");
+
+			this.phone.Incoming += dbus_incoming_call;
 			
-			dynamic DBus.Object resources = this.conn.get_object ("org.freesmartphone.Usage", 
-																  "/org/freesmartphone/Usage", 
-																  "org.freesmartphone.Usage");
+			dynamic DBus.Object resources = this.sysbus.get_object (
+										"org.freesmartphone.ousaged", 
+										"/org/freesmartphone/Usage", 
+										"org.freesmartphone.Usage");
+
 			resources.RequestResource ("CPU");
 
 		} catch (DBus.Error e) {
-            GLib.warning ("Could not get DBus Session Bus: %s", e.message);
+            GLib.warning ("DBus error: %s", e.message);
 		}
 	}
 	
