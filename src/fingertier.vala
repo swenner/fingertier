@@ -20,7 +20,7 @@ using GLib;
 using Gst;
 
 namespace Ft {
-	
+
 public struct Track {
 	public uint number;	 /* [1, pl_len] */
 	public uint pl_len;	 /* length of the playlist */
@@ -54,6 +54,7 @@ public class Player : GLib.Object {
 	private PlayList pl;		/* handles the state and the data of the player */
 	private DBus.Connection sysbus;
 	private dynamic DBus.Object phone;
+	private dynamic DBus.Object resources;
 	public Track? track {
 		get;
 		private set;
@@ -75,6 +76,7 @@ public class Player : GLib.Object {
 
 	/* destructor */
 	~Player () {
+		this.resources.ReleaseResource ("CPU");
 		this.pipeline.set_state (Gst.State.NULL);
 	}
 	
@@ -115,27 +117,35 @@ public class Player : GLib.Object {
 		try {
 			this.sysbus = DBus.Bus.get (DBus.BusType.SYSTEM);
 			this.phone = this.sysbus.get_object("org.freesmartphone.ophoned",
-                                     "/org/freesmartphone/Phone/Call",
-                                     "org.freesmartphone.Phone.Call");
+                                     "/org/freesmartphone/Phone",
+                                     "org.freesmartphone.Phone");
 
-			this.phone.Incoming += dbus_incoming_call;
+			this.phone.Incoming += dbus_incoming_call_cb;
+			/* this.phone = this.sysbus.get_object("org.freesmartphone.ogsmd",
+										"/org/freesmartphone/GSM/Device",
+										"org.freesmartphone.GSM.Call");
 			
-			dynamic DBus.Object resources = this.sysbus.get_object (
+			this.phone.CallStatus += dbus_call_status_cb; */
+			
+			this.resources = this.sysbus.get_object (
 										"org.freesmartphone.ousaged", 
 										"/org/freesmartphone/Usage", 
 										"org.freesmartphone.Usage");
 
-			resources.RequestResource ("CPU");
+			this.resources.RequestResource ("CPU");
 
 		} catch (DBus.Error e) {
             GLib.warning ("DBus error: %s", e.message);
 		}
 	}
 	
-	private void dbus_incoming_call (dynamic DBus.Object obj) {
+	private void dbus_incoming_call_cb (dynamic DBus.Object obj) {
 		stdout.printf ("Incomming call!\n");
-	
 	}
+	
+/*	private void dbus_call_status_cb (dynamic DBus.Object obj, int id, string status, int dummy) {
+		stdout.printf ("Incomming call!\n");
+	} */
 
 	/* Callback if the end of a track is reached */
 	private void gst_end_of_stream_cb (Gst.Bus bus, Gst.Message message) {
