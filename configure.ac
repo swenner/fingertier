@@ -1,19 +1,19 @@
 AC_PREREQ(2.53)
-AC_INIT([fingertier], [0.1.0], [http://code.google.com/p/fingertier])
+AC_INIT([fingertier], [0.2.0], [http://code.google.com/p/fingertier])
 AM_INIT_AUTOMAKE()
 AC_CONFIG_SRCDIR(src/fingertier.vala)
 AM_CONFIG_HEADER(config.h)
+AC_CONFIG_MACRO_DIR([m4])
 AM_MAINTAINER_MODE
 
 AC_ISC_POSIX
 AC_PROG_CC
 AC_PROG_CC_STDC
+AM_PROG_CC_C_O
 AC_STDC_HEADERS
 AC_PROG_LIBTOOL
 AC_PROG_INTLTOOL([0.35.0])
-
-AC_PATH_PROG(VALAC, valac, valac)
-AC_SUBST(VALAC)
+AM_PROG_VALAC([0.7.2])
 
 dnl i18n support
 GETTEXT_PACKAGE=AC_PACKAGE_NAME
@@ -21,7 +21,7 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 AC_SUBST(GETTEXT_PACKAGE)
 AM_GLIB_GNU_GETTEXT
 
-PKG_CHECK_MODULES(FINGERTIER, gtk+-2.0 glib-2.0 gstreamer-0.10 gio-2.0 dbus-glib-1)
+PKG_CHECK_MODULES(FINGERTIER, [gtk+-2.0 glib-2.0 gstreamer-0.10 gio-2.0 dbus-glib-1])
 AC_SUBST(FINGERTIER_CFLAGS)
 AC_SUBST(FINGERTIER_LIBS)
 

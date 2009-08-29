@@ -1,15 +1,7 @@
 
-INCLUDES = \
-	$(FINGERTIER_CFLAGS) \
-	$(NULL)
-
-BUILT_SOURCES = fingertier.vala.stamp
-
-AM_CFLAGS = -Wall -pedantic -std=c99 -DPACKAGE_DATADIR=\""$(datadir)"\"
-
 bin_PROGRAMS = fingertier
 
-fingertier_VALASOURCES = \
+fingertier_SOURCES = \
 	fingertier.vala \
 	fingertier_gtk.vala \
 	ft_configuration.vala \
@@ -18,25 +10,21 @@ fingertier_VALASOURCES = \
 	config.vapi \
 	$(NULL)
 
-nodist_fingertier_SOURCES = \
-	$(fingertier_VALASOURCES:.vala=.c) \
+fingertier_CFLAGS = \
+	$(FINGERTIER_CFLAGS) \
+	-Wall -pedantic -std=c99 -DPACKAGE_DATADIR=\""$(datadir)"\" \
 	$(NULL)
-
-fingertier.vala.stamp: $(fingertier_VALASOURCES)
-	$(VALAC) -C --pkg gtk+-2.0 --pkg dbus-glib-1 --pkg gstreamer-0.10 --pkg gio-2.0 --save-temps --basedir $(top_srcdir) $^
-	touch $@
 
 fingertier_LDADD = \
 	$(FINGERTIER_LIBS) \
 	$(NULL)
 
-EXTRA_DIST = \
-	$(fingertier_VALASOURCES) \
-	$(NULL)
+fingertier_VALAFLAGS = \
+	--pkg gtk+-2.0 --pkg dbus-glib-1 --pkg gstreamer-0.10 --pkg gio-2.0
 
-CLEANFILES = \
-	fingertier.vala.stamp \
-	*.c
+EXTRA_DIST = 
+
+CLEANFILES = 
 
 MAINTAINERCLEANFILES  = \
 	Makefile.in
