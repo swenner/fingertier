@@ -7,6 +7,7 @@ Version 0.2.0 - ???
  * play list is cyclic
  * volume level gets saved
  * cover image file names can be configured
+ * player prevents the phone from sleeping
  * many bug fixes
 
 Version 0.1.0 - 26 April 2009
