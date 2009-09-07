@@ -116,16 +116,20 @@ public class Player : GLib.Object {
 	private void setup_dbus () {
 		try {
 			this.sysbus = DBus.Bus.get (DBus.BusType.SYSTEM);
+
 			this.phone = this.sysbus.get_object("org.freesmartphone.ophoned",
                                      "/org/freesmartphone/Phone",
                                      "org.freesmartphone.Phone");
 
+			/* does not work! */
 			this.phone.Incoming += dbus_incoming_call_cb;
-			/* this.phone = this.sysbus.get_object("org.freesmartphone.ogsmd",
-										"/org/freesmartphone/GSM/Device",
-										"org.freesmartphone.GSM.Call");
 			
-			this.phone.CallStatus += dbus_call_status_cb; */
+			//this.phone = this.sysbus.get_object("org.freesmartphone.ogsmd",
+			//							"/org/freesmartphone/GSM/Device",
+			//							"org.freesmartphone.GSM.Call");
+
+			/* does not work! */
+			//this.phone.CallStatus += dbus_call_status_cb;
 			
 			this.resources = this.sysbus.get_object (
 						"org.freesmartphone.ousaged", 
@@ -137,8 +141,8 @@ public class Player : GLib.Object {
 		}
 
 		try {
+			/* works! */
 			this.resources.RequestResource ("CPU");
-			//stdout.printf ("cpu policy: %s\n", this.resources.GetRessourcePolicy ("CPU"));
 		} catch (GLib.Error e) {
 			GLib.warning ("DBus error: %s", e.message);
 		}
