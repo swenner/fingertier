@@ -128,14 +128,19 @@ public class Player : GLib.Object {
 			this.phone.CallStatus += dbus_call_status_cb; */
 			
 			this.resources = this.sysbus.get_object (
-										"org.freesmartphone.ousaged", 
-										"/org/freesmartphone/Usage", 
-										"org.freesmartphone.Usage");
-
-			this.resources.RequestResource ("CPU");
+						"org.freesmartphone.ousaged", 
+						"/org/freesmartphone/Usage", 
+						"org.freesmartphone.Usage");
 
 		} catch (DBus.Error e) {
-            GLib.warning ("DBus error: %s", e.message);
+            		GLib.warning ("DBus error: %s", e.message);
+		}
+
+		try {
+			this.resources.RequestResource ("CPU");
+			//stdout.printf ("cpu policy: %s\n", this.resources.GetRessourcePolicy ("CPU"));
+		} catch (GLib.Error e) {
+			GLib.warning ("DBus error: %s", e.message);
 		}
 	}
 	
