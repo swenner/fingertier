@@ -79,7 +79,7 @@ public class Configuration : GLib.Object {
 				conf.set_integer ("state", "TRACK_NUMBER", (int) this.track_number);
 				GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
 				
-			} catch (IOError e) {
+			} catch (GLib.FileError e) {
 				GLib.error ("Could not create configuration file.");
 			}
 			return false;
@@ -91,7 +91,12 @@ public class Configuration : GLib.Object {
 		double d;
 		string[] c;
 		try {
-			conf.load_from_file (file.get_path (), GLib.KeyFileFlags.NONE);
+			try {
+				conf.load_from_file (file.get_path (), GLib.KeyFileFlags.NONE);
+			} catch (GLib.FileError e) {
+				GLib.warning ("%s", e.message);
+				return false;
+			}
 			this.library_path = conf.get_string ("settings", "LIBRARY_PATH");
 			
 			u = (uint) conf.get_integer ("settings", "MODE");
@@ -131,8 +136,8 @@ public class Configuration : GLib.Object {
 				stdout.printf ("%s, ", s);
 			stdout.printf ("\n\n");
 			
-		} catch (GLib.IOError e) {
-    		GLib.warning ("%s", e.message);
+		} catch (GLib.KeyFileError e) {
+    			GLib.warning ("%s", e.message);
 			return false;
 		}
 		
@@ -152,7 +157,7 @@ public class Configuration : GLib.Object {
 		try {
 			GLib.FileUtils.set_contents (file.get_path (), conf.to_data(null));
 			
-		} catch (IOError e) {
+		} catch (GLib.FileError e) {
 			GLib.error ("Could not write configuration file.");
 			return false;
 		}
