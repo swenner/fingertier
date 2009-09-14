@@ -1,0 +1,35 @@
+TODO:
+  * create psyeudo random and a sorted playlist files on startup (or demand)
+  * save playlist as efficient file (just the paths?)
+  * player should pause on incomming calls
+  * 'Aux' button should play next song if phone is locked (dbus)
+  * library creation progress bar widget. GUI should never get locked.
+  * Is the GIO dependency really neccessary?
+  * Use a custom Gstreamer pipeline instead of playbin2 to reduce cpu load?
+
+Ideas:
+  * EFL GUI
+  * Clutter GUI
+
+Ressources:
+
+DBus: http://git.freesmartphone.org/?p=specs.git;a=blob_plain;f=html/index.html;hb=HEAD
+DBus: http://valadoc.org/?pkg=dbus-glib-1
+Libeflvala: http://git.freesmartphone.org/?p=libeflvala.git;a=summary
+Automake Vala support: http://www.gnu.org/software/hello/manual/automake/Vala-Support.html
+
+GTK layout:
+
++------------------------+
+|                        |
+|       cover image      |
+|                        |
++------------------------+
+|         artist         |
+|         title          |
+|         album          |
++------------------------+
+|         3/120          |
++------------------------+
+| prev, play/pause, next |
++------------------------+

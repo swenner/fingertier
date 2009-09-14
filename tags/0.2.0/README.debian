@@ -1,0 +1,38 @@
+# Fingertier cookbook for Debian on OM - 2009-04-18
+# (c) Christian Wäckerlin
+
+#Starting from a debian on your device/computer
+#(assuming you have space to waste on your device)
+apt-get install valac build-essential subversion gnome-common
+
+# checkout:
+svn checkout http://fingertier.googlecode.com/svn/trunk/ fingertier
+
+cd fingertier
+# run the cursed autogen (a tool to make configure scripts)
+./autogen.sh
+# 'days' later...
+
+# build dependencies:
+apt-get install libgtk2.0-dev libgstreamer0.10-dev
+
+# finally: an other tool to make makefiles
+./configure
+
+# finally (valac makes vala to C to ...)
+make
+
+# if you want to listen some real music (you want):
+apt-get install gstreamer0.10-plugins-bad
+apt-get install gstreamer0.10-ffmpeg gstreamer-tools
+apt-get install gstreamer0.10-plugins-good
+
+# run it:
+export DISPLAY=0:0
+./src/fingertier
+
+# or install it:
+make install
+
+# and run it
+fingertier

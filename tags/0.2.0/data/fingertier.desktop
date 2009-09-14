@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=0.0.1
+Encoding=UTF-8
+Name=Fingertier
+Comment=Figertier Music Player
+Type=Application
+Exec=fingertier
+Terminal=false
+Categories=GTK;Utilities;Applications;
+X-MB-SingleInstance=true
+Icon=fingertier

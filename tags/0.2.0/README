@@ -1,0 +1,62 @@
+===============
+  Fingertier
+===============
+
+Fingertier (German for the Aye-eye) is a minimal and finger friendly music 
+player for mobile devices. It is optimised for smart phones with small touch 
+screens, like the OpenMoko Freerunner.
+
+-----------------
+ Dependencies:
+-----------------
+ * Vala >= 0.7.2
+ * GLib-2.0
+ * GTK+-2.0
+ * GIO-2.0
+ * Gstreamer-0.10
+ * DBus-GLib-1
+
+-----------------
+ Install:
+-----------------
+ ./configure
+ make
+ sudo make install
+
+-----------------
+ Configuration:
+-----------------
+ * Edit 'LIBRARY_PATH' in ~/.fingertier/fingertier.conf to setup your music 
+   library folder. The default music folder is ~/Music.
+ * Files called 'cover.jpg' or 'folder.jpg' in the same folder as your track 
+   are displayed by the player. The list of accepted cover file names can be 
+   configured in ~/.fingertier/fingertier.conf too.
+ * A click on the cover reveals the configuration menu, where you can change the volume.
+
+-------------------
+ Packaging (opkg):
+-------------------
+You need a working OpenMoko toolchain.
+HowTo: http://wiki.openmoko.org/wiki/Toolchain
+
+Install the dependencies:
+toolchain: opkg-target install gstreamer-0.10-dev gio-2.0-dev gtk+-2.0-dev glib-2.0-dev libgdbus-dev
+on the Moko: opkg install libgio-2.0-0 gtk+ libglib-2.0-0 gstreamer gst-plugin-mad libgdbus0
+
+Extract fingertier into a folder 'fingertier'.
+Run:
+. /usr/local/openmoko/arm/bin/setup-env
+. /usr/local/openmoko/arm/environment-setup
+om-conf fingertier
+cd fingertier
+make
+cd ..
+om-make-ipkg fingertier
+
+Copy the package on your Moko, install and run it:
+scp fingertier_0.2.0_armv4t.ipk root@192.168.0.202:
+ssh root@192.168.0.202 opkg-cl install fingertier_0.2.0_armv4t.ipk
+ssh root@192.168.0.202 DISPLAY=:0.0 fingertier
+
+
+
