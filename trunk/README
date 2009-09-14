@@ -44,7 +44,9 @@ toolchain: opkg-target install gstreamer-0.10-dev gio-2.0-dev gtk+-2.0-dev glib-
 on the Moko: opkg install libgio-2.0-0 gtk+ libglib-2.0-0 gstreamer gst-plugin-mad libgdbus0
 
 Extract fingertier into a folder 'fingertier'.
-Run: 
+Run:
+. /usr/local/openmoko/arm/bin/setup-env
+. /usr/local/openmoko/arm/environment-setup
 om-conf fingertier
 cd fingertier
 make
