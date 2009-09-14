@@ -50,10 +50,10 @@ public enum PlayerState {
 /* Ft.Player implements a music player without gui */
 public class Player : GLib.Object {
 
-	private Gst.Element pipeline;   /* a Gstreamer playbin TODO: should be Gst.PlayBin2 */
+	private Gst.Element pipeline;   /* a Gst.PlayBin, TODO: move to PlayBin2 */
 	private PlayList pl;		/* handles the state and the data of the player */
 	private DBus.Connection sysbus;
-	private dynamic DBus.Object phone;
+	//private dynamic DBus.Object phone;
 	private dynamic DBus.Object resources;
 	public Track? track {
 		get;
@@ -95,6 +95,10 @@ public class Player : GLib.Object {
 
 	private void setup_pipeline () {
 		pipeline = ElementFactory.make ("playbin", "finger_playbin");
+		// TODO: PlayBin2
+		//int flags = ((1 << 1) | (1 << 4) | (1 << 5)); 
+		/* GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME | GST_PLAY_FLAG_NATIVE_AUDIO */
+		//pipeline.set ("flags", flags);
 
 		var bus = pipeline.get_bus ();
 		bus.add_signal_watch ();
@@ -107,30 +111,29 @@ public class Player : GLib.Object {
 			this.pipeline.set ("uri", track.uri);
 			this.pipeline.set_state (Gst.State.PAUSED);
 		}
-		
-		GLib.Value val = GLib.Value (typeof(double));
-		val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
-		pipeline.set_property ("volume", val);
+
+		double vol = (Math.exp (conf.volume) - 1) / (Math.E - 1);
+		this.pipeline.set ("volume", vol);
 	}
 	
 	private void setup_dbus () {
 		try {
 			this.sysbus = DBus.Bus.get (DBus.BusType.SYSTEM);
-
+/*
 			this.phone = this.sysbus.get_object("org.freesmartphone.ophoned",
                                      "/org/freesmartphone/Phone",
                                      "org.freesmartphone.Phone");
 
-			/* does not work! */
+			// does not work!
 			this.phone.Incoming += dbus_incoming_call_cb;
 			
 			//this.phone = this.sysbus.get_object("org.freesmartphone.ogsmd",
 			//							"/org/freesmartphone/GSM/Device",
 			//							"org.freesmartphone.GSM.Call");
 
-			/* does not work! */
+			// does not work!
 			//this.phone.CallStatus += dbus_call_status_cb;
-			
+*/
 			this.resources = this.sysbus.get_object (
 						"org.freesmartphone.ousaged", 
 						"/org/freesmartphone/Usage", 
@@ -147,14 +150,16 @@ public class Player : GLib.Object {
 			GLib.warning ("DBus error: %s", e.message);
 		}
 	}
-	
+
+/*	
 	private void dbus_incoming_call_cb (dynamic DBus.Object obj) {
 		stdout.printf ("Incomming call!\n");
 	}
 	
-/*	private void dbus_call_status_cb (dynamic DBus.Object obj, int id, string status, int dummy) {
+	private void dbus_call_status_cb (dynamic DBus.Object obj, int id, string status, int dummy) {
 		stdout.printf ("Incomming call!\n");
-	} */
+	} 
+*/
 
 	/* Callback if the end of a track is reached */
 	private void gst_end_of_stream_cb (Gst.Bus bus, Gst.Message message) {
@@ -277,33 +282,31 @@ public class Player : GLib.Object {
 	}
 	
 	public void increase_volume () {
-		GLib.Value val = GLib.Value (typeof(double));
-		
+		double vol;
+
 		if (conf.volume < 0.9) {
 			conf.volume += 0.1;
-			val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
-			pipeline.set_property ("volume", val);
+			vol = ((Math.exp (conf.volume) - 1) / (Math.E - 1));
+			this.pipeline.set ("volume", vol);
 			volume_changed (conf.volume);
 		} else if (conf.volume >= 0.9) {
 			conf.volume = 1.0;
-			val.set_double (conf.volume);
-			pipeline.set_property ("volume", val);
+			this.pipeline.set ("volume", conf.volume);
 			volume_changed (conf.volume);
 		}
 	}
 	
 	public void decrease_volume () {
-		GLib.Value val = GLib.Value (typeof(double));
+		double vol;
 		
 		if (conf.volume > 0.1) {
 			conf.volume -= 0.1;
-			val.set_double ((Math.exp (conf.volume) - 1) / (Math.E - 1));
-			pipeline.set_property ("volume", val);
+			vol = ((Math.exp (conf.volume) - 1) / (Math.E - 1));
+			this.pipeline.set ("volume", vol);
 			volume_changed (conf.volume);
 		} else if (conf.volume <= 0.1) {
 			conf.volume = 0.0;
-			val.set_double (conf.volume);
-			pipeline.set_property ("volume", val);
+			this.pipeline.set ("volume", conf.volume);
 			volume_changed (conf.volume);
 		}
 	}
