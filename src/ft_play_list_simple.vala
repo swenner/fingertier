@@ -153,13 +153,13 @@ public class PlayListSimple : GLib.Object, PlayList {
 		try {
 			var info = dir.query_info (GLib.FILE_ATTRIBUTE_TIME_MODIFIED, 
 									   GLib.FileQueryInfoFlags.NONE, null);
-			info.get_modification_time (mod_time_folder);
+			info.get_modification_time (out mod_time_folder);
 			stdout.printf ("Modification Time: Folder: %ld\n", mod_time_folder.tv_sec);
 			
 			if (pl.query_exists (null)) {
 				info = pl.query_info (GLib.FILE_ATTRIBUTE_TIME_MODIFIED, 
 									  GLib.FileQueryInfoFlags.NONE, null);
-				info.get_modification_time (mod_time_pl);
+				info.get_modification_time (out mod_time_pl);
 				stdout.printf ("Modification Time: Playlist: %ld\n", mod_time_pl.tv_sec);
 			}
 		} catch (GLib.Error e) {

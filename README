@@ -17,7 +17,7 @@ screens, like the OpenMoko Freerunner.
  * DBus-GLib-1
 
 -----------------
- Install:
+ Installation:
 -----------------
  ./configure
  make

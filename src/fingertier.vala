@@ -29,7 +29,7 @@ public struct Track {
 	public string artist;
 	public string title;
 	public string album;
-}	
+}
 
 public enum PlayListMode {
 	NULL = 0,
@@ -55,10 +55,12 @@ public class Player : GLib.Object {
 	private DBus.Connection sysbus;
 	//private dynamic DBus.Object phone;
 	private dynamic DBus.Object resources;
-	public Track? track {
-		get;
-		private set;
-	}
+
+	public Track? track; // FIXME: Vala regression?
+	// {
+	//	get;
+	//	private set;
+	//}
 	public double track_position {
 		get;
 		private set;
@@ -95,7 +97,7 @@ public class Player : GLib.Object {
 
 	private void setup_pipeline () {
 		pipeline = ElementFactory.make ("playbin", "finger_playbin");
-		// TODO: PlayBin2
+		// TODO: use PlayBin2
 		//int flags = ((1 << 1) | (1 << 4) | (1 << 5)); 
 		/* GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME | GST_PLAY_FLAG_NATIVE_AUDIO */
 		//pipeline.set ("flags", flags);
@@ -124,14 +126,14 @@ public class Player : GLib.Object {
                                      "/org/freesmartphone/Phone",
                                      "org.freesmartphone.Phone");
 
-			// does not work!
+			// TODO: does not work!
 			this.phone.Incoming += dbus_incoming_call_cb;
 			
 			//this.phone = this.sysbus.get_object("org.freesmartphone.ogsmd",
 			//							"/org/freesmartphone/GSM/Device",
 			//							"org.freesmartphone.GSM.Call");
 
-			// does not work!
+			// TODO: does not work!
 			//this.phone.CallStatus += dbus_call_status_cb;
 */
 			this.resources = this.sysbus.get_object (
@@ -144,7 +146,7 @@ public class Player : GLib.Object {
 		}
 
 		try {
-			/* works! */
+			/* Prevents the phone from sleeping */
 			this.resources.RequestResource ("CPU");
 		} catch (GLib.Error e) {
 			GLib.warning ("DBus error: %s", e.message);
