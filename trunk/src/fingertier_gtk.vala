@@ -39,7 +39,7 @@ public class PlayerGTK : Player {
 	private string last_cover_path; /* optimisation to avoid unneccessary cover reloads */
 
 	public PlayerGTK (PlayListType type) {
-		base.init (type);
+		base (type);
 		create_widgets ();
 		/* register signal handler */
 		this.track_tags_changed += update_tag_widgets;

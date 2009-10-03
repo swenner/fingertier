@@ -24,7 +24,9 @@ fingertier_VALAFLAGS = \
 
 EXTRA_DIST = 
 
-CLEANFILES = 
+CLEANFILES = \
+	*.c \
+	*.h 
 
 MAINTAINERCLEANFILES  = \
 	Makefile.in
